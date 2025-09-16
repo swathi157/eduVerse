@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduVerse AI - Learn Programming with Interactive Tutorials</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .gradient-bg { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        }
+        
+        .card-hover { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        
+        .card-hover:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); 
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .tutorial-content h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 2rem 0 1.5rem 0;
+            color: #1f2937;
+            border-bottom: 4px solid #3b82f6;
+            padding-bottom: 0.75rem;
+        }
+        
+        .tutorial-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #1f2937;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 0.5rem;
+        }
+        
+        .tutorial-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #374151;
+        }
+        
+        .tutorial-content p {
+            margin: 1rem 0;
+            color: #4b5563;
+            line-height: 1.8;
+        }
+        
+        .tutorial-content ul {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .tutorial-content li {
+            margin: 0.5rem 0;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        
+        .tutorial-content li::marker {
+            color: #3b82f6;
+        }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            border: 1px solid #334155;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .code-block pre {
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+        
+        .inline-code {
+            background: #f1f5f9;
+            color: #e11d48;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .course-gradient-html { background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); }
+        .course-gradient-css { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
+        .course-gradient-js { background: linear-gradient(135deg, #f59e0b 0%, #eab308 100%); }
+        .course-gradient-python { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .course-gradient-react { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); }
+        
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .sidebar-nav {
+            position: sticky;
+            top: 2rem;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+        
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 2px;
+        }
+        
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+            border-left: 4px solid #3b82f6;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .success-box {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border-left: 4px solid #10b981;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, createContext, useContext } = React;
+
+        // Global Context
+        const AppContext = createContext();
+
+        // Course data with comprehensive tutorial content
+        const coursesData = {
+            html: {
+                id: 'html',
+                title: 'HTML Fundamentals',
+                description: 'Master the building blocks of web development with comprehensive HTML training.',
+                icon: 'fab fa-html5',
+                gradient: 'course-gradient-html',
+                level: 'Beginner',
+                duration: '12 hours',
+                students: '15,420',
+                rating: 4.8,
+                modules: [
+                    {
+                        id: 'html-1',
+                        title: 'Introduction to HTML',
+                        description: 'Learn what HTML is and its basic structure.',
+                        duration: '3 hours',
+                        content: `
+                            <h1>Introduction to HTML</h1>
+                            
+                            <h2>What is HTML?</h2>
+                            <p>HTML (HyperText Markup Language) is the standard markup language for creating web pages. It describes the structure of a web page using markup tags and elements.</p>
+                            
+                            <h3>Key Features of HTML</h3>
+                            <ul>
+                                <li>Platform independent - works on any operating system</li>
+                                <li>Easy to learn and use</li>
+                                <li>Case insensitive (though lowercase is recommended)</li>
+                                <li>Supports multimedia content</li>
+                                <li>Free and open source</li>
+                            </ul>
+                            
+                            <h3>Basic HTML Structure</h3>
+                            <div class="code-block">
+                                <pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;My First Web Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome to HTML!&lt;/h1&gt;
+    &lt;p&gt;This is my first paragraph.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <p><strong>Important:</strong> The <span class="inline-code">&lt;!DOCTYPE html&gt;</span> declaration defines this document as HTML5.</p>
+                            </div>
+                            
+                            <h3>HTML Elements Explained</h3>
+                            <p>HTML elements are the building blocks of HTML pages. An HTML element consists of:</p>
+                            <ul>
+                                <li><strong>Start tag:</strong> <span class="inline-code">&lt;tagname&gt;</span></li>
+                                <li><strong>Content:</strong> The content between the opening and closing tags</li>
+                                <li><strong>End tag:</strong> <span class="inline-code">&lt;/tagname&gt;</span></li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'html-2',
+                        title: 'HTML Elements & Tags',
+                        description: 'Master common HTML elements including headings, paragraphs, and links.',
+                        duration: '4 hours',
+                        content: `
+                            <h1>HTML Elements & Tags</h1>
+                            
+                            <h2>HTML Headings</h2>
+                            <p>HTML headings are defined with the <span class="inline-code">&lt;h1&gt;</span> to <span class="inline-code">&lt;h6&gt;</span> tags. <span class="inline-code">&lt;h1&gt;</span> defines the most important heading.</p>
+                            
+                            <div class="code-block">
+                                <pre>&lt;h1&gt;This is heading 1&lt;/h1&gt;
+&lt;h2&gt;This is heading 2&lt;/h2&gt;
+&lt;h3&gt;This is heading 3&lt;/h3&gt;
+&lt;h4&gt;This is heading 4&lt;/h4&gt;
+&lt;h5&gt;This is heading 5&lt;/h5&gt;
+&lt;h6&gt;This is heading 6&lt;/h6&gt;</pre>
+                            </div>
+                            
+                            <h2>HTML Paragraphs</h2>
+                            <p>The <span class="inline-code">&lt;p&gt;</span> tag defines a paragraph. Browsers automatically add space before and after paragraphs.</p>
+                            
+                            <div class="code-block">
+                                <pre>&lt;p&gt;This is a paragraph.&lt;/p&gt;
+&lt;p&gt;This is another paragraph.&lt;/p&gt;</pre>
+                            </div>
+                            
+                            <h2>HTML Links</h2>
+                            <p>HTML links are defined with the <span class="inline-code">&lt;a&gt;</span> tag. The link's destination is specified in the <span class="inline-code">href</span> attribute.</p>
+                            
+                            <div class="code-block">
+                                <pre>&lt;a href="https://www.example.com"&gt;Visit Example.com&lt;/a&gt;
+&lt;a href="mailto:someone@example.com"&gt;Send Email&lt;/a&gt;
+&lt;a href="tel:+1234567890"&gt;Call Us&lt;/a&gt;</pre>
+                            </div>
+                            
+                            <div class="warning-box">
+                                <p><strong>Note:</strong> Always include descriptive link text for better accessibility and user experience.</p>
+                            </div>
+                        `
+                    },
+                    {
+                        id: 'html-3',
+                        title: 'HTML Forms',
+                        description: 'Create interactive forms with various input types.',
+                        duration: '3 hours',
+                        content: `
+                            <h1>HTML Forms</h1>
+                            
+                            <h2>Introduction to Forms</h2>
+                            <p>HTML forms are used to collect user input. The <span class="inline-code">&lt;form&gt;</span> element is a container for different types of input elements.</p>
+                            
+                            <h3>Basic Form Structure</h3>
+                            <div class="code-block">
+                                <pre>&lt;form action="/submit" method="post"&gt;
+    &lt;label for="name"&gt;Name:&lt;/label&gt;
+    &lt;input type="text" id="name" name="name" required&gt;
+    
+    &lt;label for="email"&gt;Email:&lt;/label&gt;
+    &lt;input type="email" id="email" name="email" required&gt;
+    
+    &lt;input type="submit" value="Submit"&gt;
+&lt;/form&gt;</pre>
+                            </div>
+                            
+                            <h3>Input Types</h3>
+                            <p>HTML5 introduced many new input types for better user experience:</p>
+                            
+                            <div class="code-block">
+                                <pre>&lt;!-- Text inputs --&gt;
+&lt;input type="text" placeholder="Enter text"&gt;
+&lt;input type="password" placeholder="Enter password"&gt;
+&lt;input type="email" placeholder="Enter email"&gt;
+
+&lt;!-- Number inputs --&gt;
+&lt;input type="number" min="1" max="100"&gt;
+&lt;input type="range" min="0" max="100" value="50"&gt;
+
+&lt;!-- Selection inputs --&gt;
+&lt;input type="checkbox" id="agree"&gt;
+&lt;input type="radio" name="gender" value="male"&gt;</pre>
+                            </div>
+                            
+                            <div class="success-box">
+                                <p><strong>Best Practice:</strong> Always use labels with form inputs for better accessibility.</p>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            css: {
+                id: 'css',
+                title: 'CSS Mastery',
+                description: 'Create beautiful, responsive designs with advanced CSS techniques.',
+                icon: 'fab fa-css3-alt',
+                gradient: 'course-gradient-css',
+                level: 'Intermediate',
+                duration: '18 hours',
+                students: '12,850',
+                rating: 4.9,
+                modules: [
+                    {
+                        id: 'css-1',
+                        title: 'CSS Selectors',
+                        description: 'Learn CSS syntax and selectors.',
+                        duration: '4 hours',
+                        content: `
+                            <h1>CSS Selectors</h1>
+                            
+                            <h2>CSS Syntax</h2>
+                            <p>CSS (Cascading Style Sheets) is used to style HTML elements. A CSS rule consists of a selector and a declaration block.</p>
+                            
+                            <div class="code-block">
+                                <pre>selector {
+    property: value;
+    property: value;
+}</pre>
+                            </div>
+                            
+                            <h3>Basic Selectors</h3>
+                            <div class="code-block">
+                                <pre>/* Element selector */
+h1 {
+    color: blue;
+    font-size: 2rem;
+}
+
+/* Class selector */
+.highlight {
+    background-color: yellow;
+    padding: 10px;
+}
+
+/* ID selector */
+#header {
+    background-color: #333;
+    color: white;
+}</pre>
+                            </div>
+                            
+                            <h3>Advanced Selectors</h3>
+                            <div class="code-block">
+                                <pre>/* Descendant selector */
+.container p {
+    line-height: 1.6;
+}
+
+/* Child selector */
+ul > li {
+    list-style-type: none;
+}
+
+/* Pseudo-class selector */
+a:hover {
+    color: red;
+    text-decoration: underline;
+}</pre>
+                            </div>
+                        `
+                    },
+                    {
+                        id: 'css-2',
+                        title: 'Box Model',
+                        description: 'Understand the CSS box model and layout fundamentals.',
+                        duration: '5 hours',
+                        content: `
+                            <h1>CSS Box Model</h1>
+                            
+                            <h2>Understanding the Box Model</h2>
+                            <p>Every HTML element is essentially a rectangular box. The CSS box model describes how these boxes are structured:</p>
+                            
+                            <ul>
+                                <li><strong>Content:</strong> The actual content of the element</li>
+                                <li><strong>Padding:</strong> Space between content and border</li>
+                                <li><strong>Border:</strong> A line around the padding and content</li>
+                                <li><strong>Margin:</strong> Space outside the border</li>
+                            </ul>
+                            
+                            <div class="code-block">
+                                <pre>.box {
+    width: 300px;
+    height: 200px;
+    padding: 20px;
+    border: 5px solid #333;
+    margin: 15px;
+}</pre>
+                            </div>
+                            
+                            <h3>Box-Sizing Property</h3>
+                            <div class="code-block">
+                                <pre>/* Border-box includes padding and border in width */
+.border-box {
+    box-sizing: border-box;
+    width: 300px;
+    padding: 20px;
+    border: 5px solid black;
+    /* Total width = 300px */
+}</pre>
+                            </div>
+                            
+                            <div class="success-box">
+                                <p><strong>Pro Tip:</strong> Use <span class="inline-code">box-sizing: border-box</span> for more predictable layouts.</p>
+                            </div>
+                        `
+                    },
+                    {
+                        id: 'css-3',
+                        title: 'Flexbox Layout',
+                        description: 'Master CSS Flexbox for modern layouts.',
+                        duration: '5 hours',
+                        content: `
+                            <h1>Flexbox Layout</h1>
+                            
+                            <h2>Introduction to Flexbox</h2>
+                            <p>Flexbox provides an efficient way to arrange, distribute, and align items in a container.</p>
+                            
+                            <h3>Flex Container Properties</h3>
+                            <div class="code-block">
+                                <pre>.flex-container {
+    display: flex;
+    flex-direction: row; /* row | column */
+    justify-content: center; /* main axis alignment */
+    align-items: center; /* cross axis alignment */
+    flex-wrap: wrap; /* wrap items */
+}</pre>
+                            </div>
+                            
+                            <h3>Common Flexbox Patterns</h3>
+                            <div class="code-block">
+                                <pre>/* Center content */
+.center-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Equal width columns */
+.equal-columns {
+    display: flex;
+}
+.equal-columns > div {
+    flex: 1;
+}</pre>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <p><strong>Remember:</strong> Flexbox is one-dimensional. For two-dimensional layouts, consider CSS Grid.</p>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            javascript: {
+                id: 'javascript',
+                title: 'JavaScript Essentials',
+                description: 'Bring your websites to life with interactive JavaScript.',
+                icon: 'fab fa-js-square',
+                gradient: 'course-gradient-js',
+                level: 'Intermediate',
+                duration: '24 hours',
+                students: '18,920',
+                rating: 4.7,
+                modules: [
+                    {
+                        id: 'js-1',
+                        title: 'Variables & Functions',
+                        description: 'Learn JavaScript basics including variables and functions.',
+                        duration: '6 hours',
+                        content: `
+                            <h1>JavaScript Variables & Functions</h1>
+                            
+                            <h2>JavaScript Variables</h2>
+                            <p>Variables are containers for storing data values. JavaScript has three ways to declare variables:</p>
+                            
+                            <div class="code-block">
+                                <pre>// let - block scoped, can be reassigned
+let message = "Hello World";
+message = "Hello JavaScript"; // OK
+
+// const - block scoped, cannot be reassigned
+const PI = 3.14159;
+
+// var - function scoped (avoid in modern JS)
+var oldWay = "I'm function scoped";</pre>
+                            </div>
+                            
+                            <h3>Data Types</h3>
+                            <div class="code-block">
+                                <pre>let name = "John";           // String
+let age = 25;               // Number
+let isStudent = true;       // Boolean
+let nothing = null;         // Null
+let notDefined;            // Undefined
+
+// Check data type
+console.log(typeof name);   // "string"</pre>
+                            </div>
+                            
+                            <h3>Functions</h3>
+                            <div class="code-block">
+                                <pre>// Function declaration
+function greet(name) {
+    return "Hello, " + name + "!";
+}
+
+// Arrow function
+const add = (a, b) => {
+    return a + b;
+};
+
+// Short arrow function
+const square = x => x * x;</pre>
+                            </div>
+                        `
+                    },
+                    {
+                        id: 'js-2',
+                        title: 'DOM Manipulation',
+                        description: 'Interact with web pages dynamically.',
+                        duration: '6 hours',
+                        content: `
+                            <h1>DOM Manipulation</h1>
+                            
+                            <h2>Selecting Elements</h2>
+                            <p>The DOM allows JavaScript to interact with HTML elements.</p>
+                            
+                            <div class="code-block">
+                                <pre>// Select by ID
+const header = document.getElementById('header');
+
+// Modern selectors
+const firstButton = document.querySelector('.btn');
+const allButtons = document.querySelectorAll('.btn');</pre>
+                            </div>
+                            
+                            <h3>Modifying Elements</h3>
+                            <div class="code-block">
+                                <pre>const element = document.querySelector('#myElement');
+
+// Change text content
+element.textContent = 'New text content';
+element.innerHTML = '&lt;strong&gt;Bold text&lt;/strong&gt;';
+
+// Modify styles
+element.style.color = 'red';
+element.classList.add('active');</pre>
+                            </div>
+                            
+                            <h3>Event Handling</h3>
+                            <div class="code-block">
+                                <pre>const button = document.querySelector('#myButton');
+
+button.addEventListener('click', function(event) {
+    console.log('Button clicked!');
+    event.preventDefault();
+});</pre>
+                            </div>
+                        `
+                    },
+                    {
+                        id: 'js-3',
+                        title: 'Async JavaScript',
+                        description: 'Master promises and async/await.',
+                        duration: '6 hours',
+                        content: `
+                            <h1>Asynchronous JavaScript</h1>
+                            
+                            <h2>Promises</h2>
+                            <p>Promises handle asynchronous operations in JavaScript.</p>
+                            
+                            <div class="code-block">
+                                <pre>// Creating a promise
+const fetchData = () => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve({ id: 1, name: 'Alice' });
+        }, 1000);
+    });
+};
+
+// Using promises
+fetchData()
+    .then(data => console.log(data))
+    .catch(error => console.error(error));</pre>
+                            </div>
+                            
+                            <h3>Async/Await</h3>
+                            <div class="code-block">
+                                <pre>// Async function
+async function getUserData() {
+    try {
+        const user = await fetchData();
+        console.log('User:', user);
+        return user;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}</pre>
+                            </div>
+                            
+                            <h3>Fetch API</h3>
+                            <div class="code-block">
+                                <pre>// GET request
+async function fetchUsers() {
+    try {
+        const response = await fetch('/api/users');
+        const users = await response.json();
+        return users;
+    } catch (error) {
+        console.error('Fetch error:', error);
+    }
+}</pre>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            python: {
+                id: 'python',
+                title: 'Python Programming',
+                description: 'Learn Python from basics to advanced concepts.',
+                icon: 'fab fa-python',
+                gradient: 'course-gradient-python',
+                level: 'Beginner',
+                duration: '28 hours',
+                students: '22,340',
+                rating: 4.8,
+                modules: [
+                    {
+                        id: 'python-1',
+                        title: 'Python Syntax',
+                        description: 'Python syntax, variables, and basic concepts.',
+                        duration: '7 hours',
+                        content: `
+                            <h1>Python Syntax & Basics</h1>
+                            
+                            <h2>Python Syntax</h2>
+                            <p>Python is known for its clean, readable syntax. It uses indentation to define code blocks.</p>
+                            
+                            <h3>Variables and Data Types</h3>
+                            <div class="code-block">
+                                <pre># Variables (no declaration needed)
+name = "Alice"
+age = 25
+height = 5.6
+is_student = True
+
+# Data types
+print(type(name))      # &lt;class 'str'&gt;
+print(type(age))       # &lt;class 'int'&gt;
+print(type(height))    # &lt;class 'float'&gt;</pre>
+                            </div>
+                            
+                            <h3>Control Flow</h3>
+                            <div class="code-block">
+                                <pre># If statements
+age = 18
+
+if age >= 18:
+    print("You are an adult")
+elif age >= 13:
+    print("You are a teenager")
+else:
+    print("You are a child")
+
+# For loops
+fruits = ["apple", "banana", "orange"]
+for fruit in fruits:
+    print(fruit)</pre>
+                            </div>
+                            
+                            <h3>Functions</h3>
+                            <div class="code-block">
+                                <pre># Basic function
+def greet(name):
+    return f"Hello, {name}!"
+
+# Function with default parameters
+def introduce(name, age=0):
+    return f"Hi, I'm {name}, {age} years old"
+
+print(greet("Alice"))
+print(introduce("Bob", 25))</pre>
+                            </div>
+                        `
+                    },
+                    {
+                        id: 'python-2',
+                        title: 'Data Structures',
+                        description: 'Master Python lists, dictionaries, and more.',
+                        duration: '7 hours',
+                        content: `
+                            <h1>Python Data Structures</h1>
+                            
+                            <h2>Lists</h2>
+                            <p>Lists are ordered, mutable collections in Python.</p>
+                            
+                            <div class="code-block">
+                                <pre># Creating lists
+fruits = ["apple", "banana", "orange"]
+numbers = [1, 2, 3, 4, 5]
+
+# Accessing elements
+print(fruits[0])     # "apple"
+print(fruits[-1])    # "orange" (last element)
+
+# List methods
+fruits.append("grape")
+fruits.remove("banana")
+print(len(fruits))   # Length of list</pre>
+                            </div>
+                            
+                            <h3>Dictionaries</h3>
+                            <div class="code-block">
+                                <pre># Creating dictionaries
+person = {
+    "name": "Alice",
+    "age": 25,
+    "city": "New York"
+}
+
+# Accessing values
+print(person["name"])        # "Alice"
+print(person.get("age"))     # 25
+
+# Adding/updating values
+person["country"] = "USA"
+person["age"] = 26</pre>
+                            </div>
+                            
+                            <h3>List Comprehensions</h3>
+                            <div class="code-block">
+                                <pre># List comprehensions
+squares = [x**2 for x in range(10)]
+evens = [x for x in range(20) if x % 2 == 0]
+
+print(squares)  # [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+print(evens)    # [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]</pre>
+                            </div>
+                        `
+                    },
+                    {
+                        id: 'python-3',
+                        title: 'Object-Oriented Programming',
+                        description: 'Learn classes, objects, and OOP concepts.',
+                        duration: '7 hours',
+                        content: `
+                            <h1>Object-Oriented Programming</h1>
+                            
+                            <h2>Classes and Objects</h2>
+                            <p>OOP allows you to create reusable code by organizing it into classes and objects.</p>
+                            
+                            <div class="code-block">
+                                <pre># Basic class definition
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    def greet(self):
+        return f"Hello, I'm {self.name}"
+    
+    def have_birthday(self):
+        self.age += 1
+
+# Creating objects
+alice = Person("Alice", 25)
+print(alice.greet())  # Hello, I'm Alice</pre>
+                            </div>
+                            
+                            <h3>Inheritance</h3>
+                            <div class="code-block">
+                                <pre># Parent class
+class Animal:
+    def __init__(self, name):
+        self.name = name
+    
+    def make_sound(self):
+        return "Some sound"
+
+# Child class
+class Dog(Animal):
+    def make_sound(self):
+        return "Woof!"
+
+# Using inheritance
+buddy = Dog("Buddy")
+print(buddy.make_sound())  # Woof!</pre>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            react: {
+                id: 'react',
+                title: 'React Development',
+                description: 'Build modern web applications with React.',
+                icon: 'fab fa-react',
+                gradient: 'course-gradient-react',
+                level: 'Advanced',
+                duration: '32 hours',
+                students: '16,780',
+                rating: 4.9,
+                modules: [
+                    {
+                        id: 'react-1',
+                        title: 'Components & JSX',
+                        description: 'Learn React fundamentals and JSX syntax.',
+                        duration: '8 hours',
+                        content: `
+                            <h1>React Components & JSX</h1>
+                            
+                            <h2>What is React?</h2>
+                            <p>React is a JavaScript library for building user interfaces. It allows you to create reusable UI components.</p>
+                            
+                            <h3>JSX Syntax</h3>
+                            <div class="code-block">
+                                <pre>// JSX allows HTML-like syntax in JavaScript
+const element = &lt;h1&gt;Hello, World!&lt;/h1&gt;;
+
+// JSX with expressions
+const name = "Alice";
+const greeting = &lt;h1&gt;Hello, {name}!&lt;/h1&gt;;</pre>
+                            </div>
+                            
+                            <h3>Function Components</h3>
+                            <div class="code-block">
+                                <pre>// Simple component
+function Welcome() {
+    return &lt;h1&gt;Hello, World!&lt;/h1&gt;;
+}
+
+// Component with props
+function UserProfile({ name, age }) {
+    return (
+        &lt;div&gt;
+            &lt;h2&gt;{name}&lt;/h2&gt;
+            &lt;p&gt;Age: {age}&lt;/p&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+                            </div>
+                            
+                            <h3>Rendering Lists</h3>
+                            <div class="code-block">
+                                <pre>function TodoList({ todos }) {
+    return (
+        &lt;ul&gt;
+            {todos.map((todo) =&gt; (
+                &lt;li key={todo.id}&gt;{todo.text}&lt;/li&gt;
+            ))}
+        &lt;/ul&gt;
+    );
+}</pre>
+                            </div>
+                        `
+                    },
+                    {
+                        id: 'react-2',
+                        title: 'Props & State',
+                        description: 'Master component communication and state management.',
+                        duration: '8 hours',
+                        content: `
+                            <h1>Props & State</h1>
+                            
+                            <h2>Props</h2>
+                            <p>Props are how components receive data from their parent components.</p>
+                            
+                            <div class="code-block">
+                                <pre>// Parent component
+function App() {
+    const user = { name: "Alice", age: 25 };
+    
+    return &lt;UserCard user={user} /&gt;;
+}
+
+// Child component receiving props
+function UserCard({ user }) {
+    return (
+        &lt;div&gt;
+            &lt;h2&gt;{user.name}&lt;/h2&gt;
+            &lt;p&gt;Age: {user.age}&lt;/p&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+                            </div>
+                            
+                            <h3>State with useState</h3>
+                            <div class="code-block">
+                                <pre>import { useState } from 'react';
+
+function Counter() {
+    const [count, setCount] = useState(0);
+    
+    return (
+        &lt;div&gt;
+            &lt;p&gt;Count: {count}&lt;/p&gt;
+            &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+                Increment
+            &lt;/button&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+                            </div>
+                            
+                            <h3>Event Handling</h3>
+                            <div class="code-block">
+                                <pre>function Form() {
+    const [name, setName] = useState('');
+    
+    const handleSubmit = (e) =&gt; {
+        e.preventDefault();
+        console.log('Submitted:', name);
+    };
+    
+    return (
+        &lt;form onSubmit={handleSubmit}&gt;
+            &lt;input
+                value={name}
+                onChange={(e) =&gt; setName(e.target.value)}
+            /&gt;
+            &lt;button type="submit"&gt;Submit&lt;/button&gt;
+        &lt;/form&gt;
+    );
+}</pre>
+                            </div>
+                        `
+                    },
+                    {
+                        id: 'react-3',
+                        title: 'Hooks & Effects',
+                        description: 'Learn useEffect and other React hooks.',
+                        duration: '8 hours',
+                        content: `
+                            <h1>Hooks & Effects</h1>
+                            
+                            <h2>useEffect Hook</h2>
+                            <p>useEffect lets you perform side effects in function components.</p>
+                            
+                            <div class="code-block">
+                                <pre>import { useState, useEffect } from 'react';
+
+function Timer() {
+    const [seconds, setSeconds] = useState(0);
+    
+    useEffect(() =&gt; {
+        const interval = setInterval(() =&gt; {
+            setSeconds(s =&gt; s + 1);
+        }, 1000);
+        
+        return () =&gt; clearInterval(interval);
+    }, []);
+    
+    return &lt;div&gt;Timer: {seconds}s&lt;/div&gt;;
+}</pre>
+                            </div>
+                            
+                            <h3>Data Fetching</h3>
+                            <div class="code-block">
+                                <pre>function UserProfile({ userId }) {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    
+    useEffect(() =&gt; {
+        fetch(\`/api/users/\${userId}\`)
+            .then(response =&gt; response.json())
+            .then(userData =&gt; {
+                setUser(userData);
+                setLoading(false);
+            });
+    }, [userId]);
+    
+    if (loading) return &lt;div&gt;Loading...&lt;/div&gt;;
+    
+    return (
+        &lt;div&gt;
+            &lt;h2&gt;{user.name}&lt;/h2&gt;
+            &lt;p&gt;{user.email}&lt;/p&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+                            </div>
+                        `
+                    }
+                ]
+            }
+        };
+
+        // App Provider Component
+        function AppProvider({ children }) {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [selectedCourse, setSelectedCourse] = useState(null);
+            const [selectedModule, setSelectedModule] = useState(null);
+            const [user, setUser] = useState(null);
+            const [completedModules, setCompletedModules] = useState(() => {
+                const saved = localStorage.getItem('completedModules');
+                return saved ? JSON.parse(saved) : [];
+            });
+
+            // Save completed modules to localStorage
+            useEffect(() => {
+                localStorage.setItem('completedModules', JSON.stringify(completedModules));
+            }, [completedModules]);
+
+            // Check for logged in user
+            useEffect(() => {
+                const savedUser = localStorage.getItem('currentUser');
+                if (savedUser) {
+                    setUser(JSON.parse(savedUser));
+                }
+            }, []);
+
+            const markModuleComplete = (moduleId) => {
+                if (!completedModules.includes(moduleId)) {
+                    setCompletedModules([...completedModules, moduleId]);
+                }
+            };
+
+            const login = (userData) => {
+                setUser(userData);
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+            };
+
+            const logout = () => {
+                setUser(null);
+                localStorage.removeItem('currentUser');
+                setCurrentPage('home');
+            };
+
+            const value = {
+                currentPage,
+                setCurrentPage,
+                selectedCourse,
+                setSelectedCourse,
+                selectedModule,
+                setSelectedModule,
+                user,
+                login,
+                logout,
+                completedModules,
+                markModuleComplete,
+                coursesData
+            };
+
+            return (
+                <AppContext.Provider value={value}>
+                    {children}
+                </AppContext.Provider>
+            );
+        }
+
+        // Navbar Component
+        function Navbar() {
+            const { currentPage, setCurrentPage, user, logout } = useContext(AppContext);
+
+            return (
+                <nav className="bg-white shadow-lg sticky top-0 z-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between items-center h-16">
+                            <div className="flex items-center">
+                                <div 
+                                    className="flex-shrink-0 cursor-pointer"
+                                    onClick={() => setCurrentPage('home')}
+                                >
+                                    <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                        EduVerse AI
+                                    </h1>
+                                </div>
+                            </div>
+                            
+                            <div className="hidden md:block">
+                                <div className="ml-10 flex items-baseline space-x-4">
+                                    <button
+                                        onClick={() => setCurrentPage('home')}
+                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                                            currentPage === 'home' 
+                                                ? 'bg-blue-100 text-blue-700' 
+                                                : 'text-gray-700 hover:text-blue-600'
+                                        }`}
+                                    >
+                                        Home
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage('courses')}
+                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                                            currentPage === 'courses' 
+                                                ? 'bg-blue-100 text-blue-700' 
+                                                : 'text-gray-700 hover:text-blue-600'
+                                        }`}
+                                    >
+                                        Courses
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center space-x-4">
+                                {user ? (
+                                    <div className="flex items-center space-x-3">
+                                        <span className="text-gray-700">Welcome, {user.name}</span>
+                                        <button
+                                            onClick={logout}
+                                            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                                        >
+                                            Logout
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={() => setCurrentPage('login')}
+                                            className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                                        >
+                                            Login
+                                        </button>
+                                        <button
+                                            onClick={() => setCurrentPage('signup')}
+                                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                                        >
+                                            Sign Up
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        }
+
+        // Hero Section Component
+        function HeroSection() {
+            const { setCurrentPage } = useContext(AppContext);
+
+            return (
+                <div className="gradient-bg text-white py-20">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center">
+                            <div className="floating-animation">
+                                <i className="fas fa-graduation-cap text-6xl mb-8 opacity-80"></i>
+                            </div>
+                            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+                                Master Programming with
+                                <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                                    EduVerse AI
+                                </span>
+                            </h1>
+                            <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto">
+                                Learn HTML, CSS, JavaScript, Python, and React through comprehensive written tutorials with hands-on examples and progress tracking.
+                            </p>
+                            <button
+                                onClick={() => setCurrentPage('courses')}
+                                className="bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg"
+                            >
+                                Start Learning Today
+                                <i className="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Course Card Component
+        function CourseCard({ course }) {
+            const { setCurrentPage, setSelectedCourse, completedModules } = useContext(AppContext);
+            
+            const completedCount = course.modules.filter(module => 
+                completedModules.includes(module.id)
+            ).length;
+            
+            const progressPercentage = (completedCount / course.modules.length) * 100;
+
+            const handleCourseClick = () => {
+                setSelectedCourse(course);
+                setCurrentPage('course');
+            };
+
+            return (
+                <div className="bg-white rounded-xl shadow-lg overflow-hidden card-hover cursor-pointer" onClick={handleCourseClick}>
+                    <div className={`h-32 ${course.gradient} flex items-center justify-center`}>
+                        <i className={`${course.icon} text-5xl text-white`}></i>
+                    </div>
+                    <div className="p-6">
+                        <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-xl font-bold text-gray-900">{course.title}</h3>
+                            <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                                {course.level}
+                            </span>
+                        </div>
+                        <p className="text-gray-600 mb-4">{course.description}</p>
+                        
+                        <div className="space-y-2 mb-4">
+                            <div className="flex items-center text-sm text-gray-500">
+                                <i className="fas fa-clock mr-2"></i>
+                                {course.duration}
+                            </div>
+                            <div className="flex items-center text-sm text-gray-500">
+                                <i className="fas fa-users mr-2"></i>
+                                {course.students} students
+                            </div>
+                            <div className="flex items-center text-sm text-gray-500">
+                                <i className="fas fa-star mr-2 text-yellow-400"></i>
+                                {course.rating} rating
+                            </div>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="mb-4">
+                            <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Progress</span>
+                                <span>{completedCount}/{course.modules.length} modules</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div 
+                                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                    style={{ width: `${progressPercentage}%` }}
+                                ></div>
+                            </div>
+                        </div>
+
+                        <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                            {completedCount > 0 ? 'Continue Learning' : 'Start Course'}
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Courses Grid Component
+        function CoursesGrid() {
+            const { coursesData } = useContext(AppContext);
+
+            return (
+                <div className="py-16 bg-gray-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center mb-12">
+                            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                                Choose Your Learning Path
+                            </h2>
+                            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                                Master programming languages through comprehensive written tutorials with practical examples and hands-on exercises.
+                            </p>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {Object.values(coursesData).map(course => (
+                                <CourseCard key={course.id} course={course} />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Course Detail Page Component
+        function CourseDetailPage() {
+            const { selectedCourse, setSelectedModule, setCurrentPage, completedModules } = useContext(AppContext);
+
+            if (!selectedCourse) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center">
+                        <div className="text-center">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-4">Course not found</h2>
+                            <button
+                                onClick={() => setCurrentPage('courses')}
+                                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                Back to Courses
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const completedCount = selectedCourse.modules.filter(module => 
+                completedModules.includes(module.id)
+            ).length;
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    {/* Course Header */}
+                    <div className={`${selectedCourse.gradient} text-white py-16`}>
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <button
+                                onClick={() => setCurrentPage('courses')}
+                                className="mb-6 text-white hover:text-gray-200 transition-colors"
+                            >
+                                <i className="fas fa-arrow-left mr-2"></i>
+                                Back to Courses
+                            </button>
+                            
+                            <div className="flex items-center mb-6">
+                                <i className={`${selectedCourse.icon} text-6xl mr-6`}></i>
+                                <div>
+                                    <h1 className="text-4xl font-bold mb-2">{selectedCourse.title}</h1>
+                                    <p className="text-xl opacity-90">{selectedCourse.description}</p>
+                                </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                <div className="glassmorphism rounded-lg p-4">
+                                    <div className="text-2xl font-bold">{selectedCourse.level}</div>
+                                    <div className="text-sm opacity-80">Difficulty Level</div>
+                                </div>
+                                <div className="glassmorphism rounded-lg p-4">
+                                    <div className="text-2xl font-bold">{selectedCourse.duration}</div>
+                                    <div className="text-sm opacity-80">Total Duration</div>
+                                </div>
+                                <div className="glassmorphism rounded-lg p-4">
+                                    <div className="text-2xl font-bold">{selectedCourse.students}</div>
+                                    <div className="text-sm opacity-80">Students Enrolled</div>
+                                </div>
+                                <div className="glassmorphism rounded-lg p-4">
+                                    <div className="text-2xl font-bold">{completedCount}/{selectedCourse.modules.length}</div>
+                                    <div className="text-sm opacity-80">Modules Completed</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Course Modules */}
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                        <h2 className="text-3xl font-bold text-gray-900 mb-8">Course Modules</h2>
+                        
+                        <div className="grid gap-6">
+                            {selectedCourse.modules.map((module, index) => {
+                                const isCompleted = completedModules.includes(module.id);
+                                
+                                return (
+                                    <div
+                                        key={module.id}
+                                        className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
+                                        onClick={() => {
+                                            setSelectedModule(module);
+                                            setCurrentPage('module');
+                                        }}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center">
+                                                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                                    {isCompleted ? (
+                                                        <i className="fas fa-check text-green-600 text-xl"></i>
+                                                    ) : (
+                                                        <span className="text-blue-600 font-bold">{index + 1}</span>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                                                        {module.title}
+                                                        {isCompleted && <i className="fas fa-check-circle text-green-500 ml-2"></i>}
+                                                    </h3>
+                                                    <p className="text-gray-600">{module.description}</p>
+                                                    <div className="flex items-center mt-2 text-sm text-gray-500">
+                                                        <i className="fas fa-clock mr-1"></i>
+                                                        {module.duration}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <i className="fas fa-chevron-right text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Module Detail Page Component
+        function ModuleDetailPage() {
+            const { selectedModule, selectedCourse, setCurrentPage, completedModules, markModuleComplete, user } = useContext(AppContext);
+
+            if (!selectedModule || !selectedCourse) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center">
+                        <div className="text-center">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-4">Module not found</h2>
+                            <button
+                                onClick={() => setCurrentPage('course')}
+                                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                Back to Course
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const isCompleted = completedModules.includes(selectedModule.id);
+            const currentModuleIndex = selectedCourse.modules.findIndex(m => m.id === selectedModule.id);
+            const nextModule = selectedCourse.modules[currentModuleIndex + 1];
+            const prevModule = selectedCourse.modules[currentModuleIndex - 1];
+
+            const handleMarkComplete = () => {
+                markModuleComplete(selectedModule.id);
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                        <div className="flex flex-col lg:flex-row gap-8">
+                            {/* Sidebar Navigation */}
+                            <div className="lg:w-1/4">
+                                <div className="sidebar-nav bg-white rounded-lg shadow-md p-6">
+                                    <button
+                                        onClick={() => setCurrentPage('course')}
+                                        className="mb-6 text-blue-600 hover:text-blue-800 transition-colors"
+                                    >
+                                        <i className="fas fa-arrow-left mr-2"></i>
+                                        Back to {selectedCourse.title}
+                                    </button>
+                                    
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Course Modules</h3>
+                                    
+                                    <div className="space-y-2">
+                                        {selectedCourse.modules.map((module, index) => {
+                                            const moduleCompleted = completedModules.includes(module.id);
+                                            const isCurrent = module.id === selectedModule.id;
+                                            
+                                            return (
+                                                <div
+                                                    key={module.id}
+                                                    className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                                                        isCurrent 
+                                                            ? 'bg-blue-100 border-l-4 border-blue-600' 
+                                                            : 'hover:bg-gray-50'
+                                                    }`}
+                                                    onClick={() => {
+                                                        setSelectedModule(module);
+                                                    }}
+                                                >
+                                                    <div className="flex items-center">
+                                                        <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mr-3">
+                                                            {moduleCompleted ? (
+                                                                <i className="fas fa-check text-green-600 text-sm"></i>
+                                                            ) : (
+                                                                <span className="text-gray-500 text-sm">{index + 1}</span>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className={`text-sm font-medium truncate ${
+                                                                isCurrent ? 'text-blue-700' : 'text-gray-900'
+                                                            }`}>
+                                                                {module.title}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Main Content */}
+                            <div className="lg:w-3/4">
+                                <div className="bg-white rounded-lg shadow-md">
+                                    {/* Module Header */}
+                                    <div className="border-b border-gray-200 p-6">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h1 className="text-3xl font-bold text-gray-900">{selectedModule.title}</h1>
+                                            {isCompleted && (
+                                                <div className="flex items-center text-green-600">
+                                                    <i className="fas fa-check-circle mr-2"></i>
+                                                    <span className="font-medium">Completed</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <p className="text-gray-600 mb-4">{selectedModule.description}</p>
+                                        <div className="flex items-center text-sm text-gray-500">
+                                            <i className="fas fa-clock mr-2"></i>
+                                            {selectedModule.duration}
+                                        </div>
+                                    </div>
+
+                                    {/* Module Content */}
+                                    <div className="p-6">
+                                        <div 
+                                            className="tutorial-content prose max-w-none"
+                                            dangerouslySetInnerHTML={{ __html: selectedModule.content }}
+                                        />
+                                    </div>
+
+                                    {/* Module Footer */}
+                                    <div className="border-t border-gray-200 p-6">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex space-x-4">
+                                                {prevModule && (
+                                                    <button
+                                                        onClick={() => setSelectedModule(prevModule)}
+                                                        className="flex items-center px-4 py-2 text-blue-600 hover:text-blue-800 transition-colors"
+                                                    >
+                                                        <i className="fas fa-chevron-left mr-2"></i>
+                                                        Previous
+                                                    </button>
+                                                )}
+                                            </div>
+                                            
+                                            <div className="flex items-center space-x-4">
+                                                {!isCompleted && (
+                                                    <button
+                                                        onClick={handleMarkComplete}
+                                                        className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                                                    >
+                                                        <i className="fas fa-check mr-2"></i>
+                                                        Mark as Completed
+                                                    </button>
+                                                )}
+                                                
+                                                {nextModule && (
+                                                    <button
+                                                        onClick={() => setSelectedModule(nextModule)}
+                                                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                                                    >
+                                                        Next
+                                                        <i className="fas fa-chevron-right ml-2"></i>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Guest User Progress Notice */}
+                            {!user && (
+                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4 mx-6 mb-6">
+                                    <div className="flex items-center">
+                                        <i className="fas fa-info-circle text-blue-600 mr-3"></i>
+                                        <div>
+                                            <h4 className="text-sm font-medium text-blue-800">Learning as a Guest</h4>
+                                            <p className="text-sm text-blue-700 mt-1">
+                                                Your progress is saved locally. 
+                                                <button
+                                                    onClick={() => setCurrentPage('signup')}
+                                                    className="font-medium underline hover:no-underline ml-1"
+                                                >
+                                                    Create an account
+                                                </button>
+                                                {' '}to save your progress permanently across devices.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Login Component
+        function LoginPage() {
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+            const { login, setCurrentPage } = useContext(AppContext);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                setError('');
+
+                // Simple validation
+                if (!email || !password) {
+                    setError('Please fill in all fields');
+                    return;
+                }
+
+                // Mock authentication - in real app, this would be an API call
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const user = users.find(u => u.email === email && u.password === password);
+
+                if (user) {
+                    login({ name: user.name, email: user.email });
+                    setCurrentPage('home');
+                } else {
+                    setError('Invalid email or password');
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+                    <div className="sm:mx-auto sm:w-full sm:max-w-md">
+                        <div className="text-center">
+                            <h2 className="text-3xl font-bold text-gray-900">Sign in to EduVerse AI</h2>
+                            <p className="mt-2 text-gray-600">Continue your learning journey</p>
+                        </div>
+                    </div>
+
+                    <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+                        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                {error && (
+                                    <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+                                        {error}
+                                    </div>
+                                )}
+
+                                <div>
+                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                        Email address
+                                    </label>
+                                    <div className="mt-1">
+                                        <input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            autoComplete="email"
+                                            required
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="Enter your email"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                        Password
+                                    </label>
+                                    <div className="mt-1">
+                                        <input
+                                            id="password"
+                                            name="password"
+                                            type="password"
+                                            autoComplete="current-password"
+                                            required
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="Enter your password"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <button
+                                        type="submit"
+                                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                                    >
+                                        Sign in
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div className="mt-6">
+                                <div className="text-center">
+                                    <span className="text-sm text-gray-600">
+                                        Don't have an account?{' '}
+                                        <button
+                                            onClick={() => setCurrentPage('signup')}
+                                            className="font-medium text-blue-600 hover:text-blue-500"
+                                        >
+                                            Sign up
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Signup Component
+        function SignupPage() {
+            const [name, setName] = useState('');
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [confirmPassword, setConfirmPassword] = useState('');
+            const [error, setError] = useState('');
+            const { login, setCurrentPage } = useContext(AppContext);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                setError('');
+
+                // Validation
+                if (!name || !email || !password || !confirmPassword) {
+                    setError('Please fill in all fields');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    setError('Passwords do not match');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    setError('Password must be at least 6 characters');
+                    return;
+                }
+
+                // Check if user already exists
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                if (users.find(u => u.email === email)) {
+                    setError('User with this email already exists');
+                    return;
+                }
+
+                // Create new user
+                const newUser = { name, email, password };
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+
+                // Log in the user
+                login({ name, email });
+                setCurrentPage('home');
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+                    <div className="sm:mx-auto sm:w-full sm:max-w-md">
+                        <div className="text-center">
+                            <h2 className="text-3xl font-bold text-gray-900">Create your account</h2>
+                            <p className="mt-2 text-gray-600">Start your learning journey today</p>
+                        </div>
+                    </div>
+
+                    <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+                        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                {error && (
+                                    <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+                                        {error}
+                                    </div>
+                                )}
+
+                                <div>
+                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                                        Full Name
+                                    </label>
+                                    <div className="mt-1">
+                                        <input
+                                            id="name"
+                                            name="name"
+                                            type="text"
+                                            required
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="Enter your full name"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                        Email address
+                                    </label>
+                                    <div className="mt-1">
+                                        <input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            autoComplete="email"
+                                            required
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="Enter your email"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                        Password
+                                    </label>
+                                    <div className="mt-1">
+                                        <input
+                                            id="password"
+                                            name="password"
+                                            type="password"
+                                            required
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="Create a password"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                                        Confirm Password
+                                    </label>
+                                    <div className="mt-1">
+                                        <input
+                                            id="confirmPassword"
+                                            name="confirmPassword"
+                                            type="password"
+                                            required
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="Confirm your password"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <button
+                                        type="submit"
+                                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                                    >
+                                        Create Account
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div className="mt-6">
+                                <div className="text-center">
+                                    <span className="text-sm text-gray-600">
+                                        Already have an account?{' '}
+                                        <button
+                                            onClick={() => setCurrentPage('login')}
+                                            className="font-medium text-blue-600 hover:text-blue-500"
+                                        >
+                                            Sign in
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Footer Component
+        function Footer() {
+            return (
+                <footer className="bg-gray-900 text-white py-12">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                            <div className="col-span-1 md:col-span-2">
+                                <h3 className="text-2xl font-bold mb-4">EduVerse AI</h3>
+                                <p className="text-gray-300 mb-4">
+                                    Empowering learners worldwide with comprehensive programming tutorials and hands-on learning experiences.
+                                </p>
+                                <div className="flex space-x-4">
+                                    <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                                        <i className="fab fa-twitter text-xl"></i>
+                                    </a>
+                                    <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                                        <i className="fab fa-facebook text-xl"></i>
+                                    </a>
+                                    <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                                        <i className="fab fa-linkedin text-xl"></i>
+                                    </a>
+                                    <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                                        <i className="fab fa-github text-xl"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 className="text-lg font-semibold mb-4">Courses</h4>
+                                <ul className="space-y-2 text-gray-300">
+                                    <li><a href="#" className="hover:text-white transition-colors">HTML Fundamentals</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">CSS Mastery</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">JavaScript Essentials</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Python Programming</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">React Development</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <h4 className="text-lg font-semibold mb-4">Support</h4>
+                                <ul className="space-y-2 text-gray-300">
+                                    <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Community</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-300">
+                            <p>&copy; 2024 EduVerse AI. All rights reserved.</p>
+                        </div>
+                    </div>
+                </footer>
+            );
+        }
+
+        // Main App Component
+        function App() {
+            const { currentPage } = useContext(AppContext);
+
+            const renderPage = () => {
+                switch (currentPage) {
+                    case 'home':
+                        return (
+                            <>
+                                <HeroSection />
+                                <CoursesGrid />
+                            </>
+                        );
+                    case 'courses':
+                        return <CoursesGrid />;
+                    case 'course':
+                        return <CourseDetailPage />;
+                    case 'module':
+                        return <ModuleDetailPage />;
+                    case 'login':
+                        return <LoginPage />;
+                    case 'signup':
+                        return <SignupPage />;
+                    default:
+                        return (
+                            <>
+                                <HeroSection />
+                                <CoursesGrid />
+                            </>
+                        );
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-white">
+                    <Navbar />
+                    <main>
+                        {renderPage()}
+                    </main>
+                    {currentPage !== 'login' && currentPage !== 'signup' && <Footer />}
+                </div>
+            );
+        }
+
+        // Root Component
+        function Root() {
+            return (
+                <AppProvider>
+                    <App />
+                </AppProvider>
+            );
+        }
+
+        // Render the app
+        ReactDOM.render(<Root />, document.getElementById('root'));
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f8eea050544061',t:'MTc1Nzk0Nzc4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
