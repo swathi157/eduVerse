@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduVerse AI - Learn with AI-Powered Education</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/three@0.155.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tutor-container {
+            width: 300px;
+            height: 400px;
+            position: relative;
+        }
+        
+        .dark {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .dark .bg-white {
+            background-color: #2d2d2d !important;
+        }
+        
+        .dark .text-gray-800 {
+            color: #ffffff !important;
+        }
+        
+        .dark .text-gray-600 {
+            color: #cccccc !important;
+        }
+        
+        .dark .border-gray-200 {
+            border-color: #404040 !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">EduVerse AI</h1>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="nav-link text-gray-800 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="#courses" class="nav-link text-gray-800 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Courses</a>
+                        <a href="#dashboard" class="nav-link text-gray-800 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Dashboard</a>
+                        <button id="themeToggle" class="p-2 rounded-md text-gray-800 hover:text-blue-600 transition-colors">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button id="loginBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="min-h-screen flex items-center gradient-bg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="text-white animate-fade-in">
+                    <h1 class="text-5xl md:text-6xl font-bold mb-6">
+                        Learn with <span class="text-yellow-300">AI-Powered</span> Education
+                    </h1>
+                    <p class="text-xl mb-8 text-gray-200">
+                        Experience the future of learning with EduVerse AI. Our intelligent tutoring system adapts to your learning style and helps you master any subject.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button id="startLearningBtn" class="bg-yellow-400 text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-colors">
+                            Start Learning
+                        </button>
+                        <button id="voiceToggle" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition-colors">
+                            <i class="fas fa-volume-up mr-2"></i>Enable Voice
+                        </button>
+                    </div>
+                </div>
+                <div class="flex justify-center">
+                    <div class="tutor-container animate-float">
+                        <div id="tutorCanvas" class="w-full h-full bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <div class="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-robot text-4xl text-white"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-2">AI Tutor</h3>
+                                <p class="text-sm text-gray-200">Your personal learning companion</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section id="courses" class="py-20 bg-white transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Explore Our Courses</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Master the skills that matter with our comprehensive course catalog designed for the modern learner.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Programming Courses -->
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fab fa-html5 text-2xl text-orange-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">HTML & CSS</h3>
+                    <p class="text-gray-600 mb-4">Build beautiful, responsive websites from scratch. Learn modern HTML5 and CSS3 techniques.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="HTML & CSS">Learn More</button>
+                </div>
+
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fab fa-js-square text-2xl text-yellow-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">JavaScript</h3>
+                    <p class="text-gray-600 mb-4">Master the language of the web. From basics to advanced ES6+ features and frameworks.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="JavaScript">Learn More</button>
+                </div>
+
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fab fa-python text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Python Programming</h3>
+                    <p class="text-gray-600 mb-4">Learn the most versatile programming language. Perfect for beginners and professionals.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Python Programming">Learn More</button>
+                </div>
+
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fab fa-java text-2xl text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Java</h3>
+                    <p class="text-gray-600 mb-4">Build enterprise applications with Java. Object-oriented programming made simple.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Java">Learn More</button>
+                </div>
+
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-code text-2xl text-gray-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">C & C++</h3>
+                    <p class="text-gray-600 mb-4">Master system programming with C and object-oriented programming with C++.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="C & C++">Learn More</button>
+                </div>
+
+                <!-- Computer Science Courses -->
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-project-diagram text-2xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Data Structures</h3>
+                    <p class="text-gray-600 mb-4">Learn efficient data organization. Arrays, linked lists, trees, graphs, and more.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Data Structures">Learn More</button>
+                </div>
+
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-algorithm text-2xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Algorithms</h3>
+                    <p class="text-gray-600 mb-4">Master problem-solving techniques. Sorting, searching, dynamic programming, and optimization.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Algorithms">Learn More</button>
+                </div>
+
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-database text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Database Management</h3>
+                    <p class="text-gray-600 mb-4">Master SQL and NoSQL databases. Design, query, and optimize database systems.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Database Management">Learn More</button>
+                </div>
+
+                <!-- AI & ML Courses -->
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-brain text-2xl text-pink-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Machine Learning</h3>
+                    <p class="text-gray-600 mb-4">Build intelligent systems that learn from data. Supervised and unsupervised learning.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Machine Learning">Learn More</button>
+                </div>
+
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-robot text-2xl text-cyan-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Artificial Intelligence</h3>
+                    <p class="text-gray-600 mb-4">Explore the future of technology. Neural networks, deep learning, and AI applications.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Artificial Intelligence">Learn More</button>
+                </div>
+
+                <!-- Cloud & Security -->
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-cloud text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Cloud Computing</h3>
+                    <p class="text-gray-600 mb-4">Master AWS, Azure, and GCP. Deploy scalable applications in the cloud.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Cloud Computing">Learn More</button>
+                </div>
+
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-shield-alt text-2xl text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Cybersecurity</h3>
+                    <p class="text-gray-600 mb-4">Protect digital assets and systems. Learn ethical hacking and security protocols.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Cybersecurity">Learn More</button>
+                </div>
+
+                <!-- Electronics Courses -->
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-bolt text-2xl text-yellow-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Electrical & Electronics</h3>
+                    <p class="text-gray-600 mb-4">Understand circuits, components, and electrical systems. From basics to advanced concepts.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Electrical & Electronics">Learn More</button>
+                </div>
+
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-microchip text-2xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Digital Electronics</h3>
+                    <p class="text-gray-600 mb-4">Master digital circuits and logic design. Boolean algebra and digital systems.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Digital Electronics">Learn More</button>
+                </div>
+
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-plug text-2xl text-orange-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Power Systems</h3>
+                    <p class="text-gray-600 mb-4">Learn electrical power generation, transmission, and distribution systems.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Power Systems">Learn More</button>
+                </div>
+
+                <div class="course-card bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-200">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-cogs text-2xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Robotics & Automation</h3>
+                    <p class="text-gray-600 mb-4">Build intelligent machines. Sensors, actuators, control systems, and AI integration.</p>
+                    <button class="learn-more-btn w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" data-course="Robotics & Automation">Learn More</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Course Content Section -->
+    <section id="courseContent" class="py-20 bg-white transition-colors duration-300 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <button id="backToCourses" class="flex items-center text-blue-600 hover:text-blue-800 mb-4">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Courses
+                </button>
+                <div id="courseHeader" class="text-center mb-12">
+                    <!-- Course header will be populated dynamically -->
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Course Modules Sidebar -->
+                <div class="lg:col-span-1">
+                    <div class="bg-gray-50 rounded-xl p-6 sticky top-24">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Course Modules</h3>
+                        <div id="courseModules" class="space-y-2">
+                            <!-- Modules will be populated dynamically -->
+                        </div>
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <div class="text-sm text-gray-600 mb-2">Course Progress</div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                <div id="courseProgress" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+                            </div>
+                            <div class="text-xs text-gray-500">0% Complete</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Content Area -->
+                <div class="lg:col-span-3">
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <div id="moduleContent">
+                            <!-- Module content will be populated dynamically -->
+                        </div>
+                        
+                        <!-- Navigation Buttons -->
+                        <div class="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
+                            <button id="prevModule" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="fas fa-chevron-left mr-2"></i>Previous
+                            </button>
+                            <button id="markComplete" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                                Mark as Complete
+                            </button>
+                            <button id="nextModule" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                Next<i class="fas fa-chevron-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="py-20 bg-gray-100 transition-colors duration-300 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Your Learning Dashboard</h2>
+                <p class="text-xl text-gray-600">Track your progress and continue your learning journey</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Enrolled Courses</h3>
+                        <div id="enrolledCourses" class="space-y-4">
+                            <p class="text-gray-600">No courses enrolled yet. Start learning by exploring our course catalog!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Learning Stats</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Courses Completed</span>
+                                <span class="font-semibold text-green-600">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Hours Learned</span>
+                                <span class="font-semibold text-blue-600">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Certificates Earned</span>
+                                <span class="font-semibold text-purple-600">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button id="browseCourses" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                Browse Courses
+                            </button>
+                            <button id="viewCertificates" class="w-full border border-blue-600 text-blue-600 py-2 rounded-lg hover:bg-blue-50 transition-colors">
+                                View Certificates
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome to EduVerse AI</h2>
+                <p class="text-gray-600">Sign in to continue your learning journey</p>
+            </div>
+            
+            <div id="loginForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input type="email" id="loginEmail" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Enter your email">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" id="loginPassword" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Enter your password">
+                </div>
+                <button id="loginSubmit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors mb-4">
+                    Sign In
+                </button>
+                <p class="text-center text-gray-600">
+                    Don't have an account? 
+                    <button id="showSignup" class="text-blue-600 hover:underline">Sign up</button>
+                </p>
+            </div>
+            
+            <div id="signupForm" class="hidden">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+                    <input type="text" id="signupName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Enter your full name">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input type="email" id="signupEmail" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Enter your email">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" id="signupPassword" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Create a password">
+                </div>
+                <button id="signupSubmit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors mb-4">
+                    Create Account
+                </button>
+                <p class="text-center text-gray-600">
+                    Already have an account? 
+                    <button id="showLogin" class="text-blue-600 hover:underline">Sign in</button>
+                </p>
+            </div>
+            
+            <button id="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentUser = null;
+        let enrolledCourses = [];
+        let isDarkMode = false;
+        let isVoiceEnabled = false;
+        let currentCourse = null;
+        let currentModuleIndex = 0;
+        let completedModules = {};
+
+        // Course data with modules and content
+        const courseData = {
+            "HTML & CSS": {
+                description: "Build beautiful, responsive websites from scratch. Learn modern HTML5 and CSS3 techniques.",
+                duration: "8 weeks",
+                level: "Beginner",
+                modules: [
+                    {
+                        title: "Introduction to HTML",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">Introduction to HTML</h2>
+                            <p class="mb-4">HTML (HyperText Markup Language) is the standard markup language for creating web pages. It describes the structure of a web page using elements and tags.</p>
+                            <h3 class="text-xl font-semibold mb-3">What you'll learn:</h3>
+                            <ul class="list-disc list-inside mb-4 space-y-2">
+                                <li>Basic HTML structure and syntax</li>
+                                <li>Common HTML elements and their purposes</li>
+                                <li>Creating your first web page</li>
+                                <li>Understanding semantic HTML</li>
+                            </ul>
+                            <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                                <h4 class="font-semibold mb-2">Example HTML Structure:</h4>
+                                <pre class="text-sm"><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;My First Web Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome to HTML!&lt;/h1&gt;
+    &lt;p&gt;This is my first paragraph.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "HTML Elements and Tags",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">HTML Elements and Tags</h2>
+                            <p class="mb-4">Learn about the building blocks of HTML - elements and tags that structure your content.</p>
+                            <h3 class="text-xl font-semibold mb-3">Common HTML Elements:</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold">Headings</h4>
+                                    <p class="text-sm">h1, h2, h3, h4, h5, h6</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold">Text Elements</h4>
+                                    <p class="text-sm">p, span, strong, em</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold">Lists</h4>
+                                    <p class="text-sm">ul, ol, li</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold">Links & Images</h4>
+                                    <p class="text-sm">a, img</p>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "CSS Fundamentals",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">CSS Fundamentals</h2>
+                            <p class="mb-4">CSS (Cascading Style Sheets) is used to style and layout web pages. Learn how to make your HTML look beautiful.</p>
+                            <h3 class="text-xl font-semibold mb-3">CSS Basics:</h3>
+                            <ul class="list-disc list-inside mb-4 space-y-2">
+                                <li>CSS syntax and selectors</li>
+                                <li>Colors, fonts, and text styling</li>
+                                <li>Box model and spacing</li>
+                                <li>Layout techniques</li>
+                            </ul>
+                            <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                                <h4 class="font-semibold mb-2">Example CSS:</h4>
+                                <pre class="text-sm"><code>h1 {
+    color: blue;
+    font-size: 24px;
+    text-align: center;
+}
+
+p {
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}</code></pre>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Responsive Design",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">Responsive Design</h2>
+                            <p class="mb-4">Learn how to create websites that work perfectly on all devices - from mobile phones to desktop computers.</p>
+                            <h3 class="text-xl font-semibold mb-3">Key Concepts:</h3>
+                            <ul class="list-disc list-inside mb-4 space-y-2">
+                                <li>Mobile-first design approach</li>
+                                <li>CSS Media queries</li>
+                                <li>Flexible grid systems</li>
+                                <li>Responsive images and typography</li>
+                            </ul>
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h4 class="font-semibold mb-2">Media Query Example:</h4>
+                                <pre class="text-sm"><code>@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        padding: 10px;
+    }
+}</code></pre>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            "JavaScript": {
+                description: "Master the language of the web. From basics to advanced ES6+ features and frameworks.",
+                duration: "10 weeks",
+                level: "Beginner to Intermediate",
+                modules: [
+                    {
+                        title: "JavaScript Basics",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">JavaScript Basics</h2>
+                            <p class="mb-4">JavaScript is a powerful programming language that makes websites interactive. Learn the fundamentals of programming with JavaScript.</p>
+                            <h3 class="text-xl font-semibold mb-3">What you'll learn:</h3>
+                            <ul class="list-disc list-inside mb-4 space-y-2">
+                                <li>Variables and data types</li>
+                                <li>Functions and scope</li>
+                                <li>Control structures (if/else, loops)</li>
+                                <li>Working with the DOM</li>
+                            </ul>
+                            <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                                <h4 class="font-semibold mb-2">Your First JavaScript:</h4>
+                                <pre class="text-sm"><code>// Variables
+let name = "John";
+const age = 25;
+
+// Function
+function greet(person) {
+    return "Hello, " + person + "!";
+}
+
+// Using the function
+console.log(greet(name));</code></pre>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "DOM Manipulation",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">DOM Manipulation</h2>
+                            <p class="mb-4">Learn how to make your web pages interactive by manipulating HTML elements with JavaScript.</p>
+                            <h3 class="text-xl font-semibold mb-3">Key Topics:</h3>
+                            <ul class="list-disc list-inside mb-4 space-y-2">
+                                <li>Selecting HTML elements</li>
+                                <li>Changing content and styles</li>
+                                <li>Handling user events</li>
+                                <li>Creating dynamic content</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        title: "ES6+ Features",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">Modern JavaScript (ES6+)</h2>
+                            <p class="mb-4">Explore modern JavaScript features that make your code cleaner and more efficient.</p>
+                            <h3 class="text-xl font-semibold mb-3">Modern Features:</h3>
+                            <ul class="list-disc list-inside mb-4 space-y-2">
+                                <li>Arrow functions</li>
+                                <li>Template literals</li>
+                                <li>Destructuring</li>
+                                <li>Promises and async/await</li>
+                            </ul>
+                        `
+                    }
+                ]
+            },
+            "Python Programming": {
+                description: "Learn the most versatile programming language. Perfect for beginners and professionals.",
+                duration: "12 weeks",
+                level: "Beginner",
+                modules: [
+                    {
+                        title: "Python Fundamentals",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">Python Fundamentals</h2>
+                            <p class="mb-4">Python is a beginner-friendly programming language known for its simple syntax and powerful capabilities.</p>
+                            <h3 class="text-xl font-semibold mb-3">Getting Started:</h3>
+                            <ul class="list-disc list-inside mb-4 space-y-2">
+                                <li>Python syntax and indentation</li>
+                                <li>Variables and data types</li>
+                                <li>Input and output operations</li>
+                                <li>Basic operators</li>
+                            </ul>
+                            <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                                <h4 class="font-semibold mb-2">Hello World in Python:</h4>
+                                <pre class="text-sm"><code># Your first Python program
+name = input("What's your name? ")
+print(f"Hello, {name}! Welcome to Python!")
+
+# Working with numbers
+age = 25
+next_year = age + 1
+print(f"Next year you'll be {next_year} years old.")</code></pre>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Control Structures",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">Control Structures</h2>
+                            <p class="mb-4">Learn how to control the flow of your Python programs with conditions and loops.</p>
+                            <h3 class="text-xl font-semibold mb-3">Topics Covered:</h3>
+                            <ul class="list-disc list-inside mb-4 space-y-2">
+                                <li>If, elif, and else statements</li>
+                                <li>For and while loops</li>
+                                <li>Break and continue statements</li>
+                                <li>Nested structures</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        title: "Functions and Modules",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">Functions and Modules</h2>
+                            <p class="mb-4">Organize your code with functions and learn to use Python's extensive library ecosystem.</p>
+                            <h3 class="text-xl font-semibold mb-3">What you'll learn:</h3>
+                            <ul class="list-disc list-inside mb-4 space-y-2">
+                                <li>Defining and calling functions</li>
+                                <li>Parameters and return values</li>
+                                <li>Importing and using modules</li>
+                                <li>Creating your own modules</li>
+                            </ul>
+                        `
+                    }
+                ]
+            },
+            "Machine Learning": {
+                description: "Build intelligent systems that learn from data. Supervised and unsupervised learning.",
+                duration: "16 weeks",
+                level: "Intermediate",
+                modules: [
+                    {
+                        title: "Introduction to Machine Learning",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">Introduction to Machine Learning</h2>
+                            <p class="mb-4">Machine Learning is a subset of artificial intelligence that enables computers to learn and make decisions from data without being explicitly programmed.</p>
+                            <h3 class="text-xl font-semibold mb-3">Types of Machine Learning:</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold">Supervised Learning</h4>
+                                    <p class="text-sm">Learning with labeled data</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold">Unsupervised Learning</h4>
+                                    <p class="text-sm">Finding patterns in unlabeled data</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold">Reinforcement Learning</h4>
+                                    <p class="text-sm">Learning through interaction and rewards</p>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Data Preprocessing",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">Data Preprocessing</h2>
+                            <p class="mb-4">Learn how to clean, transform, and prepare data for machine learning algorithms.</p>
+                            <h3 class="text-xl font-semibold mb-3">Key Steps:</h3>
+                            <ul class="list-disc list-inside mb-4 space-y-2">
+                                <li>Data cleaning and handling missing values</li>
+                                <li>Feature scaling and normalization</li>
+                                <li>Encoding categorical variables</li>
+                                <li>Feature selection and engineering</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        title: "Supervised Learning Algorithms",
+                        content: `
+                            <h2 class="text-2xl font-bold mb-4">Supervised Learning Algorithms</h2>
+                            <p class="mb-4">Explore popular supervised learning algorithms for classification and regression tasks.</p>
+                            <h3 class="text-xl font-semibold mb-3">Algorithms Covered:</h3>
+                            <ul class="list-disc list-inside mb-4 space-y-2">
+                                <li>Linear and Logistic Regression</li>
+                                <li>Decision Trees and Random Forests</li>
+                                <li>Support Vector Machines</li>
+                                <li>Neural Networks</li>
+                            </ul>
+                        `
+                    }
+                ]
+            }
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNavigation();
+            initializeTheme();
+            initializeAuth();
+            initializeTutor();
+            initializeVoice();
+            initializeCourses();
+            initializeButtons();
+        });
+
+        // Navigation functionality
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    
+                    // Hide all sections
+                    sections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
+                    
+                    // Show target section
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.classList.remove('hidden');
+                        
+                        // Special handling for dashboard
+                        if (targetId === 'dashboard') {
+                            if (!currentUser) {
+                                showLoginModal();
+                                return;
+                            }
+                            updateDashboard();
+                        }
+                    }
+                    
+                    // Update active nav link
+                    navLinks.forEach(nl => nl.classList.remove('text-blue-600'));
+                    link.classList.add('text-blue-600');
+                });
+            });
+        }
+
+        // Theme toggle functionality
+        function initializeTheme() {
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+
+            themeToggle.addEventListener('click', () => {
+                isDarkMode = !isDarkMode;
+                
+                if (isDarkMode) {
+                    body.classList.add('dark');
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                } else {
+                    body.classList.remove('dark');
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                }
+            });
+        }
+
+        // Authentication functionality
+        function initializeAuth() {
+            const loginBtn = document.getElementById('loginBtn');
+            const loginModal = document.getElementById('loginModal');
+            const closeModal = document.getElementById('closeModal');
+            const showSignup = document.getElementById('showSignup');
+            const showLogin = document.getElementById('showLogin');
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const loginSubmit = document.getElementById('loginSubmit');
+            const signupSubmit = document.getElementById('signupSubmit');
+
+            loginBtn.addEventListener('click', showLoginModal);
+            closeModal.addEventListener('click', hideLoginModal);
+            
+            showSignup.addEventListener('click', () => {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+            });
+            
+            showLogin.addEventListener('click', () => {
+                signupForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+            });
+
+            loginSubmit.addEventListener('click', handleLogin);
+            signupSubmit.addEventListener('click', handleSignup);
+
+            // Close modal on outside click
+            loginModal.addEventListener('click', (e) => {
+                if (e.target === loginModal) {
+                    hideLoginModal();
+                }
+            });
+        }
+
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.remove('hidden');
+            document.getElementById('loginModal').classList.add('flex');
+        }
+
+        function hideLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('loginModal').classList.remove('flex');
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Simulate login (in real app, this would be an API call)
+            currentUser = {
+                name: email.split('@')[0],
+                email: email,
+                joinDate: new Date().toISOString()
+            };
+
+            updateAuthUI();
+            hideLoginModal();
+            showNotification('Welcome back! Login successful.');
+        }
+
+        function handleSignup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            if (!name || !email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Simulate signup (in real app, this would be an API call)
+            currentUser = {
+                name: name,
+                email: email,
+                joinDate: new Date().toISOString()
+            };
+
+            updateAuthUI();
+            hideLoginModal();
+            showNotification('Account created successfully! Welcome to EduVerse AI.');
+        }
+
+        function updateAuthUI() {
+            const loginBtn = document.getElementById('loginBtn');
+            if (currentUser) {
+                loginBtn.textContent = currentUser.name;
+                loginBtn.onclick = logout;
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            enrolledCourses = [];
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.textContent = 'Login';
+            loginBtn.onclick = showLoginModal;
+            showNotification('Logged out successfully.');
+        }
+
+        // 3D Tutor initialization (simplified version)
+        function initializeTutor() {
+            const tutorCanvas = document.getElementById('tutorCanvas');
+            
+            // Since we can't load actual 3D models in this environment,
+            // we'll create an animated avatar representation
+            const avatar = tutorCanvas.querySelector('.fa-robot').parentElement;
+            
+            // Add subtle animation to simulate AI tutor
+            setInterval(() => {
+                avatar.style.transform = `scale(${1 + Math.sin(Date.now() * 0.003) * 0.05})`;
+            }, 50);
+
+            // Add speaking animation when voice is enabled
+            tutorCanvas.addEventListener('speak', () => {
+                avatar.classList.add('animate-pulse');
+                setTimeout(() => {
+                    avatar.classList.remove('animate-pulse');
+                }, 2000);
+            });
+        }
+
+        // Voice functionality
+        function initializeVoice() {
+            const voiceToggle = document.getElementById('voiceToggle');
+            
+            voiceToggle.addEventListener('click', () => {
+                isVoiceEnabled = !isVoiceEnabled;
+                
+                if (isVoiceEnabled) {
+                    voiceToggle.innerHTML = '<i class="fas fa-volume-mute mr-2"></i>Disable Voice';
+                    speakWelcome();
+                } else {
+                    voiceToggle.innerHTML = '<i class="fas fa-volume-up mr-2"></i>Enable Voice';
+                    stopSpeaking();
+                }
+            });
+        }
+
+        function speakWelcome() {
+            if ('speechSynthesis' in window && isVoiceEnabled) {
+                const utterance = new SpeechSynthesisUtterance(
+                    "Welcome to EduVerse AI! I'm your personal AI tutor. I'm here to help you learn and grow. Explore our courses and start your learning journey today!"
+                );
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                speechSynthesis.speak(utterance);
+                
+                // Trigger tutor animation
+                document.getElementById('tutorCanvas').dispatchEvent(new Event('speak'));
+            }
+        }
+
+        function stopSpeaking() {
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+            }
+        }
+
+        // Course functionality
+        function initializeCourses() {
+            const learnMoreBtns = document.querySelectorAll('.learn-more-btn');
+            
+            learnMoreBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const courseTitle = btn.getAttribute('data-course');
+                    
+                    if (!currentUser) {
+                        showLoginModal();
+                        return;
+                    }
+                    
+                    enrollInCourse(courseTitle);
+                });
+            });
+        }
+
+        // Initialize all button functionality
+        function initializeButtons() {
+            // Start Learning button
+            const startLearningBtn = document.getElementById('startLearningBtn');
+            if (startLearningBtn) {
+                startLearningBtn.addEventListener('click', () => {
+                    document.getElementById('courses').scrollIntoView({ behavior: 'smooth' });
+                    showNotification('Explore our courses below and start your learning journey!');
+                });
+            }
+
+            // Browse Courses button in dashboard
+            const browseCourses = document.getElementById('browseCourses');
+            if (browseCourses) {
+                browseCourses.addEventListener('click', () => {
+                    // Hide dashboard and show courses
+                    document.getElementById('dashboard').classList.add('hidden');
+                    document.getElementById('courses').classList.remove('hidden');
+                    
+                    // Update nav
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.remove('text-blue-600');
+                        if (link.getAttribute('href') === '#courses') {
+                            link.classList.add('text-blue-600');
+                        }
+                    });
+                    
+                    showNotification('Browse our complete course catalog below!');
+                });
+            }
+
+            // View Certificates button
+            const viewCertificates = document.getElementById('viewCertificates');
+            if (viewCertificates) {
+                viewCertificates.addEventListener('click', () => {
+                    if (enrolledCourses.length === 0) {
+                        showNotification('Complete some courses first to earn certificates!');
+                    } else {
+                        showNotification('Certificates feature coming soon! Complete courses to earn them.');
+                    }
+                });
+            }
+        }
+
+        function enrollInCourse(courseTitle) {
+            if (!enrolledCourses.includes(courseTitle)) {
+                enrolledCourses.push(courseTitle);
+                showNotification(`Successfully enrolled in ${courseTitle}!`);
+                
+                if (isVoiceEnabled) {
+                    const utterance = new SpeechSynthesisUtterance(
+                        `Great choice! You've enrolled in ${courseTitle}. Let's start learning together!`
+                    );
+                    speechSynthesis.speak(utterance);
+                }
+            }
+            
+            // Open course content
+            openCourse(courseTitle);
+        }
+
+        function openCourse(courseTitle) {
+            if (!courseData[courseTitle]) {
+                showNotification('Course content not available yet. Coming soon!');
+                return;
+            }
+
+            currentCourse = courseTitle;
+            currentModuleIndex = 0;
+            
+            // Hide all sections and show course content
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById('courseContent').classList.remove('hidden');
+            
+            // Load course content
+            loadCourseContent();
+        }
+
+        function loadCourseContent() {
+            const course = courseData[currentCourse];
+            
+            // Update course header
+            const courseHeader = document.getElementById('courseHeader');
+            courseHeader.innerHTML = `
+                <div class="flex items-center justify-center mb-4">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-graduation-cap text-2xl text-blue-600"></i>
+                    </div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">${currentCourse}</h1>
+                        <p class="text-gray-600">${course.description}</p>
+                    </div>
+                </div>
+                <div class="flex justify-center space-x-6 text-sm text-gray-600">
+                    <span><i class="fas fa-clock mr-1"></i>${course.duration}</span>
+                    <span><i class="fas fa-signal mr-1"></i>${course.level}</span>
+                    <span><i class="fas fa-book mr-1"></i>${course.modules.length} Modules</span>
+                </div>
+            `;
+            
+            // Load modules sidebar
+            loadModulesSidebar();
+            
+            // Load current module content
+            loadModuleContent();
+            
+            // Initialize course navigation
+            initializeCourseNavigation();
+        }
+
+        function loadModulesSidebar() {
+            const course = courseData[currentCourse];
+            const modulesContainer = document.getElementById('courseModules');
+            
+            modulesContainer.innerHTML = course.modules.map((module, index) => {
+                const isActive = index === currentModuleIndex;
+                const isCompleted = completedModules[currentCourse] && completedModules[currentCourse].includes(index);
+                
+                return `
+                    <div class="module-item p-3 rounded-lg cursor-pointer transition-colors ${
+                        isActive ? 'bg-blue-100 border-l-4 border-blue-600' : 'hover:bg-gray-100'
+                    }" data-module-index="${index}">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 rounded-full flex items-center justify-center mr-3 ${
+                                isCompleted ? 'bg-green-500 text-white' : isActive ? 'bg-blue-500 text-white' : 'bg-gray-300'
+                            }">
+                                ${isCompleted ? '<i class="fas fa-check text-xs"></i>' : index + 1}
+                            </div>
+                            <span class="text-sm font-medium ${isActive ? 'text-blue-600' : 'text-gray-700'}">${module.title}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Add click handlers to module items
+            document.querySelectorAll('.module-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const moduleIndex = parseInt(item.getAttribute('data-module-index'));
+                    currentModuleIndex = moduleIndex;
+                    loadCourseContent();
+                });
+            });
+            
+            // Update progress
+            updateCourseProgress();
+        }
+
+        function loadModuleContent() {
+            const course = courseData[currentCourse];
+            const module = course.modules[currentModuleIndex];
+            
+            document.getElementById('moduleContent').innerHTML = module.content;
+        }
+
+        function updateCourseProgress() {
+            if (!completedModules[currentCourse]) {
+                completedModules[currentCourse] = [];
+            }
+            
+            const totalModules = courseData[currentCourse].modules.length;
+            const completedCount = completedModules[currentCourse].length;
+            const progressPercent = Math.round((completedCount / totalModules) * 100);
+            
+            document.getElementById('courseProgress').style.width = `${progressPercent}%`;
+            document.querySelector('.text-xs.text-gray-500').textContent = `${progressPercent}% Complete`;
+        }
+
+        function initializeCourseNavigation() {
+            const backBtn = document.getElementById('backToCourses');
+            const prevBtn = document.getElementById('prevModule');
+            const nextBtn = document.getElementById('nextModule');
+            const markCompleteBtn = document.getElementById('markComplete');
+            
+            // Back to courses
+            backBtn.addEventListener('click', () => {
+                document.getElementById('courseContent').classList.add('hidden');
+                document.getElementById('courses').classList.remove('hidden');
+            });
+            
+            // Previous module
+            prevBtn.addEventListener('click', () => {
+                if (currentModuleIndex > 0) {
+                    currentModuleIndex--;
+                    loadCourseContent();
+                }
+            });
+            
+            // Next module
+            nextBtn.addEventListener('click', () => {
+                if (currentModuleIndex < courseData[currentCourse].modules.length - 1) {
+                    currentModuleIndex++;
+                    loadCourseContent();
+                }
+            });
+            
+            // Mark as complete
+            markCompleteBtn.addEventListener('click', () => {
+                if (!completedModules[currentCourse]) {
+                    completedModules[currentCourse] = [];
+                }
+                
+                if (!completedModules[currentCourse].includes(currentModuleIndex)) {
+                    completedModules[currentCourse].push(currentModuleIndex);
+                    showNotification('Module marked as complete! Great job!');
+                    
+                    if (isVoiceEnabled) {
+                        const utterance = new SpeechSynthesisUtterance(
+                            "Excellent work! You've completed this module. Keep up the great learning!"
+                        );
+                        speechSynthesis.speak(utterance);
+                    }
+                    
+                    loadModulesSidebar();
+                }
+            });
+            
+            // Update button states
+            prevBtn.disabled = currentModuleIndex === 0;
+            nextBtn.disabled = currentModuleIndex === courseData[currentCourse].modules.length - 1;
+        }
+
+        // Dashboard functionality
+        function updateDashboard() {
+            const enrolledCoursesContainer = document.getElementById('enrolledCourses');
+            
+            if (enrolledCourses.length === 0) {
+                enrolledCoursesContainer.innerHTML = '<p class="text-gray-600">No courses enrolled yet. Start learning by exploring our course catalog!</p>';
+            } else {
+                enrolledCoursesContainer.innerHTML = enrolledCourses.map(course => {
+                    const progress = Math.floor(Math.random() * 30); // Simulate some progress
+                    return `
+                        <div class="bg-gray-50 rounded-lg p-4 flex justify-between items-center">
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-800">${course}</h4>
+                                <p class="text-sm text-gray-600 mb-2">Progress: ${progress}%</p>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                            <button class="continue-course-btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors ml-4" data-course="${course}">
+                                Continue
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Add event listeners to continue buttons
+                document.querySelectorAll('.continue-course-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const course = btn.getAttribute('data-course');
+                        showNotification(`Continuing ${course}... Opening course content!`);
+                        
+                        if (isVoiceEnabled) {
+                            const utterance = new SpeechSynthesisUtterance(
+                                `Let's continue with ${course}. I'll help you learn step by step!`
+                            );
+                            speechSynthesis.speak(utterance);
+                        }
+                    });
+                });
+            }
+        }
+
+        // Utility functions
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'980a6594d7c83be6',t:'MTc1ODEzMDkxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
