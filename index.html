@@ -1,0 +1,2200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduVerse AI - Learn with AI-Powered Education</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        
+        .tutor-container {
+            width: 350px;
+            height: 450px;
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .theme-transition {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .dark {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .dark .bg-white {
+            background-color: #2d2d2d !important;
+        }
+        
+        .dark .bg-gray-50 {
+            background-color: #1f1f1f !important;
+        }
+        
+        .dark .bg-gray-100 {
+            background-color: #3d3d3d !important;
+        }
+        
+        .dark .bg-gray-800 {
+            background-color: #0f0f0f !important;
+        }
+        
+        .dark .text-gray-800 {
+            color: #ffffff !important;
+        }
+        
+        .dark .text-gray-700 {
+            color: #e5e5e5 !important;
+        }
+        
+        .dark .text-gray-600 {
+            color: #cccccc !important;
+        }
+        
+        .dark .text-gray-500 {
+            color: #a0a0a0 !important;
+        }
+        
+        .dark .text-gray-400 {
+            color: #888888 !important;
+        }
+        
+        .dark .text-gray-300 {
+            color: #d0d0d0 !important;
+        }
+        
+        .dark .text-gray-900 {
+            color: #ffffff !important;
+        }
+        
+        .dark .border-gray-200 {
+            border-color: #404040 !important;
+        }
+        
+        .dark .border-gray-300 {
+            border-color: #505050 !important;
+        }
+        
+        .dark .border-gray-700 {
+            border-color: #606060 !important;
+        }
+        
+        .dark .hover\:bg-gray-50:hover {
+            background-color: #3d3d3d !important;
+        }
+        
+        .dark .hover\:bg-gray-100:hover {
+            background-color: #4d4d4d !important;
+        }
+        
+        .dark .hover\:bg-gray-200:hover {
+            background-color: #5d5d5d !important;
+        }
+        
+        .dark .hover\:text-gray-700:hover {
+            color: #ffffff !important;
+        }
+        
+        .dark .hover\:text-gray-800:hover {
+            color: #ffffff !important;
+        }
+        
+        .dark .hover\:text-white:hover {
+            color: #ffffff !important;
+        }
+        
+        .dark input {
+            background-color: #3d3d3d !important;
+            border-color: #505050 !important;
+            color: #ffffff !important;
+        }
+        
+        .dark input:focus {
+            border-color: #667eea !important;
+        }
+        
+        .dark label {
+            color: #e5e5e5 !important;
+        }
+        
+        .tutor-speech-bubble {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 12px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 250px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+        
+        .tutor-speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
+        
+        .tutor-speech-bubble.show {
+            opacity: 1;
+        }
+        
+        .dark .tutor-speech-bubble {
+            background: #2d2d2d;
+            color: #ffffff;
+        }
+        
+        .dark .tutor-speech-bubble:after {
+            border-top-color: #2d2d2d;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.error {
+            background: #ef4444;
+        }
+        
+        .module-item {
+            transition: all 0.3s ease;
+        }
+        
+        .module-item:hover {
+            background-color: rgba(99, 102, 241, 0.05);
+        }
+        
+        .module-item.completed {
+            background-color: rgba(34, 197, 94, 0.1);
+        }
+        
+        .module-item.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .achievement-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #fbbf24;
+            color: #92400e;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin: 2px;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="theme-transition">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50 theme-transition">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-indigo-600">EduVerse AI</h1>
+                    </div>
+                    <div class="hidden md:ml-6 md:flex md:space-x-8">
+                        <a href="#" onclick="showPage('home')" class="nav-link text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Home</a>
+                        <a href="#" onclick="showPage('courses')" class="nav-link text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Courses</a>
+                        <a href="#" onclick="showPage('dashboard')" class="nav-link text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Dashboard</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100 theme-transition">
+                        <i class="fas fa-moon text-gray-600" id="theme-icon"></i>
+                    </button>
+                    <button onclick="toggleVoice()" class="p-2 rounded-lg hover:bg-gray-100 theme-transition">
+                        <i class="fas fa-volume-up text-gray-600" id="voice-icon"></i>
+                    </button>
+                    <div id="auth-buttons">
+                        <button onclick="showLogin()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">Login</button>
+                    </div>
+                    <div id="user-menu" class="hidden">
+                        <span class="text-gray-700" id="username"></span>
+                        <button onclick="logout()" class="ml-2 text-red-600 hover:text-red-800">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notification-text"></span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- Home Page -->
+        <div id="home-page" class="page">
+            <!-- Hero Section -->
+            <section class="gradient-bg text-white py-20">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col lg:flex-row items-center">
+                        <div class="lg:w-1/2 mb-10 lg:mb-0">
+                            <h1 class="text-5xl font-bold mb-6 animate-float">Welcome to EduVerse AI</h1>
+                            <p class="text-xl mb-8 opacity-90">Experience the future of learning with our AI-powered educational platform. Master programming, engineering, and cutting-edge technologies with personalized guidance from your AI tutor.</p>
+                            <div class="space-x-4">
+                                <button onclick="showPage('courses')" class="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">Explore Courses</button>
+                                <button onclick="startDemo()" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition-colors">Try Demo</button>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2 flex justify-center">
+                            <div class="tutor-container relative">
+                                <div id="tutor-3d" class="w-full h-full rounded-lg bg-white bg-opacity-10 backdrop-blur-sm"></div>
+                                <div id="tutor-speech" class="tutor-speech-bubble">
+                                    <span id="tutor-text">Hi! I'm your AI tutor. Ready to learn?</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="py-20 bg-gray-50 theme-transition">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-gray-800 mb-4">Why Choose EduVerse AI?</h2>
+                        <p class="text-xl text-gray-600">Advanced learning features powered by artificial intelligence</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="bg-white p-8 rounded-xl shadow-lg card-hover theme-transition">
+                            <div class="text-indigo-600 text-4xl mb-4">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-4 text-gray-800">AI-Powered Tutor</h3>
+                            <p class="text-gray-600">Interactive 3D tutor with voice narration and personalized guidance throughout your learning journey</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-xl shadow-lg card-hover theme-transition">
+                            <div class="text-indigo-600 text-4xl mb-4">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-4 text-gray-800">Progress Tracking</h3>
+                            <p class="text-gray-600">Monitor your learning journey with detailed analytics, achievements, and completion tracking</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-xl shadow-lg card-hover theme-transition">
+                            <div class="text-indigo-600 text-4xl mb-4">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-4 text-gray-800">Responsive Learning</h3>
+                            <p class="text-gray-600">Learn anywhere, anytime with our mobile-optimized platform and offline capabilities</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="py-16 bg-white theme-transition">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid md:grid-cols-4 gap-8 text-center">
+                        <div class="stats-card p-6 rounded-xl">
+                            <div class="text-3xl font-bold mb-2">50,000+</div>
+                            <div class="text-sm opacity-90">Students Enrolled</div>
+                        </div>
+                        <div class="stats-card p-6 rounded-xl">
+                            <div class="text-3xl font-bold mb-2">16</div>
+                            <div class="text-sm opacity-90">Expert Courses</div>
+                        </div>
+                        <div class="stats-card p-6 rounded-xl">
+                            <div class="text-3xl font-bold mb-2">95%</div>
+                            <div class="text-sm opacity-90">Completion Rate</div>
+                        </div>
+                        <div class="stats-card p-6 rounded-xl">
+                            <div class="text-3xl font-bold mb-2">24/7</div>
+                            <div class="text-sm opacity-90">AI Support</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Courses Page -->
+        <div id="courses-page" class="page hidden">
+            <section class="py-20 bg-gray-50 theme-transition">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-gray-800 mb-4">Our Comprehensive Courses</h2>
+                        <p class="text-xl text-gray-600">Master the skills that matter in today's tech world with our AI-guided curriculum</p>
+                    </div>
+                    
+                    <!-- Course Categories -->
+                    <div class="mb-8">
+                        <div class="flex flex-wrap justify-center gap-4">
+                            <button onclick="filterCourses('all')" class="filter-btn active bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors">All Courses</button>
+                            <button onclick="filterCourses('programming')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">Programming</button>
+                            <button onclick="filterCourses('ai-ml')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">AI & ML</button>
+                            <button onclick="filterCourses('engineering')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">Engineering</button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="courses-grid">
+                        <!-- Courses will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page hidden">
+            <section class="py-20 bg-gray-50 theme-transition">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="mb-8">
+                        <h2 class="text-4xl font-bold text-gray-800 mb-4">My Learning Dashboard</h2>
+                        <p class="text-xl text-gray-600">Track your progress and continue your learning journey</p>
+                    </div>
+                    
+                    <!-- Dashboard Stats -->
+                    <div id="dashboard-stats" class="grid md:grid-cols-4 gap-6 mb-8">
+                        <!-- Stats will be populated by JavaScript -->
+                    </div>
+                    
+                    <!-- Enrolled Courses -->
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">My Courses</h3>
+                        <div id="enrolled-courses" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Enrolled courses will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Achievements -->
+                    <div id="achievements-section" class="hidden">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">Achievements</h3>
+                        <div id="achievements" class="flex flex-wrap gap-2 mb-8">
+                            <!-- Achievements will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Course Detail Modal -->
+        <div id="course-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl max-w-5xl w-full max-h-[90vh] overflow-hidden theme-transition flex flex-col">
+                <div class="flex justify-between items-center p-6 border-b border-gray-200 flex-shrink-0">
+                    <h3 class="text-2xl font-bold text-gray-800" id="modal-title"></h3>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 p-2">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto">
+                    <div class="p-6" id="modal-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Modal -->
+        <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl max-w-md w-full theme-transition">
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Login to EduVerse AI</h3>
+                    <form onsubmit="handleLogin(event)">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                            <input type="email" id="login-email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500" required>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                            <input type="password" id="login-password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500" required>
+                        </div>
+                        <div class="flex justify-between">
+                            <button type="button" onclick="closeLoginModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                                <span id="login-btn-text">Login</span>
+                                <div id="login-spinner" class="loading-spinner hidden inline-block ml-2"></div>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="mt-4 text-center">
+                        <p class="text-gray-600">Don't have an account? <button onclick="showSignup()" class="text-indigo-600 hover:text-indigo-800">Sign up</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">EduVerse AI</h3>
+                    <p class="text-gray-300">Empowering learners worldwide with AI-driven education and cutting-edge technology courses.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" onclick="showPage('home')" class="text-gray-300 hover:text-white">Home</a></li>
+                        <li><a href="#" onclick="showPage('courses')" class="text-gray-300 hover:text-white">Courses</a></li>
+                        <li><a href="#" onclick="showPage('dashboard')" class="text-gray-300 hover:text-white">Dashboard</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">About Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white text-xl"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white text-xl"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white text-xl"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white text-xl"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p class="text-gray-300">&copy; 2025 EduVerse AI. All rights reserved. Built with ❤️ for learners worldwide.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global state
+        let currentUser = null;
+        let enrolledCourses = [];
+        let isDarkMode = false;
+        let isVoiceEnabled = false;
+        let tutorScene = null;
+        let currentFilter = 'all';
+
+        // Course data with detailed modules
+        const courses = [
+            {
+                id: 'html-css',
+                title: 'HTML & CSS',
+                description: 'Master the fundamentals of web development with HTML and CSS.',
+                longDescription: 'Learn to create beautiful, responsive websites from scratch using HTML5 and CSS3.',
+                icon: 'fab fa-html5',
+                category: 'programming',
+                difficulty: 'Beginner',
+                duration: '6 weeks',
+                modules: [
+                    { title: 'Introduction to HTML', duration: '2 hours', description: 'Learn HTML basics and document structure' },
+                    { title: 'HTML Elements & Structure', duration: '3 hours', description: 'Master semantic HTML elements and page layout' },
+                    { title: 'CSS Fundamentals', duration: '4 hours', description: 'Styling with CSS properties and selectors' },
+                    { title: 'Responsive Design', duration: '3 hours', description: 'Create mobile-friendly layouts' },
+                    { title: 'CSS Grid & Flexbox', duration: '4 hours', description: 'Modern layout techniques' },
+                    { title: 'Web Project', duration: '5 hours', description: 'Build a complete responsive website' }
+                ]
+            },
+            {
+                id: 'javascript',
+                title: 'JavaScript',
+                description: 'Learn modern JavaScript programming from basics to advanced concepts.',
+                longDescription: 'Master JavaScript ES6+ features, DOM manipulation, and asynchronous programming.',
+                icon: 'fab fa-js-square',
+                category: 'programming',
+                difficulty: 'Intermediate',
+                duration: '8 weeks',
+                modules: [
+                    { title: 'JavaScript Basics', duration: '3 hours', description: 'Variables, data types, and operators' },
+                    { title: 'DOM Manipulation', duration: '4 hours', description: 'Interact with web page elements' },
+                    { title: 'Functions & Scope', duration: '3 hours', description: 'Function declarations and closures' },
+                    { title: 'Async Programming', duration: '4 hours', description: 'Promises, async/await, and APIs' },
+                    { title: 'ES6+ Features', duration: '3 hours', description: 'Modern JavaScript syntax and features' },
+                    { title: 'JavaScript Project', duration: '6 hours', description: 'Build an interactive web application' }
+                ]
+            },
+            {
+                id: 'python',
+                title: 'Python Programming',
+                description: 'Comprehensive Python course covering syntax, libraries, and applications.',
+                longDescription: 'Learn Python from basics to advanced topics including data analysis and web development.',
+                icon: 'fab fa-python',
+                category: 'programming',
+                difficulty: 'Beginner',
+                duration: '10 weeks',
+                modules: [
+                    { title: 'Introduction to Python', duration: '2 hours', description: 'Python syntax and basic concepts' },
+                    { title: 'Data Types & Variables', duration: '3 hours', description: 'Numbers, strings, lists, and dictionaries' },
+                    { title: 'Control Structures', duration: '3 hours', description: 'Loops, conditionals, and logic' },
+                    { title: 'Functions & Modules', duration: '4 hours', description: 'Code organization and reusability' },
+                    { title: 'Object-Oriented Programming', duration: '4 hours', description: 'Classes, objects, and inheritance' },
+                    { title: 'Mini Project', duration: '5 hours', description: 'Build a Python application' }
+                ]
+            },
+            {
+                id: 'java',
+                title: 'Java',
+                description: 'Object-oriented programming with Java for enterprise applications.',
+                longDescription: 'Master Java programming with focus on OOP principles and enterprise development.',
+                icon: 'fab fa-java',
+                category: 'programming',
+                difficulty: 'Intermediate',
+                duration: '12 weeks',
+                modules: [
+                    { title: 'Java Fundamentals', duration: '3 hours', description: 'Syntax, variables, and basic concepts' },
+                    { title: 'OOP Concepts', duration: '4 hours', description: 'Classes, objects, inheritance, polymorphism' },
+                    { title: 'Collections Framework', duration: '4 hours', description: 'Lists, sets, maps, and iterators' },
+                    { title: 'Exception Handling', duration: '3 hours', description: 'Error handling and debugging' },
+                    { title: 'Multithreading', duration: '4 hours', description: 'Concurrent programming concepts' },
+                    { title: 'Java Application', duration: '6 hours', description: 'Build a complete Java application' }
+                ]
+            },
+            {
+                id: 'cpp',
+                title: 'C & C++',
+                description: 'System programming and competitive coding with C and C++.',
+                longDescription: 'Learn C and C++ for system programming, game development, and competitive programming.',
+                icon: 'fas fa-code',
+                category: 'programming',
+                difficulty: 'Advanced',
+                duration: '14 weeks',
+                modules: [
+                    { title: 'C Programming Basics', duration: '4 hours', description: 'Syntax, variables, and basic I/O' },
+                    { title: 'Pointers & Memory', duration: '5 hours', description: 'Memory management and pointer arithmetic' },
+                    { title: 'C++ Introduction', duration: '3 hours', description: 'Object-oriented features in C++' },
+                    { title: 'Classes & Objects', duration: '4 hours', description: 'OOP implementation in C++' },
+                    { title: 'STL & Templates', duration: '4 hours', description: 'Standard Template Library usage' },
+                    { title: 'System Project', duration: '6 hours', description: 'Build a system-level application' }
+                ]
+            },
+            {
+                id: 'data-structures',
+                title: 'Data Structures',
+                description: 'Essential data structures for efficient algorithm implementation.',
+                longDescription: 'Master fundamental data structures and their applications in problem-solving.',
+                icon: 'fas fa-project-diagram',
+                category: 'programming',
+                difficulty: 'Intermediate',
+                duration: '8 weeks',
+                modules: [
+                    { title: 'Arrays & Strings', duration: '3 hours', description: 'Linear data structures and operations' },
+                    { title: 'Linked Lists', duration: '3 hours', description: 'Dynamic data structures and pointers' },
+                    { title: 'Stacks & Queues', duration: '3 hours', description: 'LIFO and FIFO data structures' },
+                    { title: 'Trees & Graphs', duration: '4 hours', description: 'Hierarchical and network structures' },
+                    { title: 'Hash Tables', duration: '3 hours', description: 'Fast lookup data structures' },
+                    { title: 'Advanced Structures', duration: '4 hours', description: 'Heaps, tries, and specialized structures' }
+                ]
+            },
+            {
+                id: 'algorithms',
+                title: 'Algorithms',
+                description: 'Problem-solving techniques and algorithmic thinking.',
+                longDescription: 'Develop algorithmic thinking and master common problem-solving patterns.',
+                icon: 'fas fa-brain',
+                category: 'programming',
+                difficulty: 'Advanced',
+                duration: '10 weeks',
+                modules: [
+                    { title: 'Algorithm Analysis', duration: '3 hours', description: 'Time and space complexity analysis' },
+                    { title: 'Sorting & Searching', duration: '4 hours', description: 'Fundamental algorithms and optimization' },
+                    { title: 'Recursion & DP', duration: '4 hours', description: 'Dynamic programming and recursive solutions' },
+                    { title: 'Graph Algorithms', duration: '4 hours', description: 'Traversal, shortest path, and network algorithms' },
+                    { title: 'Greedy Algorithms', duration: '3 hours', description: 'Optimization and greedy choice strategies' },
+                    { title: 'Competitive Programming', duration: '5 hours', description: 'Advanced problem-solving techniques' }
+                ]
+            },
+            {
+                id: 'database',
+                title: 'Database Management',
+                description: 'SQL, NoSQL databases and database design principles.',
+                longDescription: 'Learn database design, SQL queries, and modern database technologies.',
+                icon: 'fas fa-database',
+                category: 'programming',
+                difficulty: 'Intermediate',
+                duration: '8 weeks',
+                modules: [
+                    { title: 'Database Fundamentals', duration: '3 hours', description: 'RDBMS concepts and normalization' },
+                    { title: 'SQL Queries', duration: '4 hours', description: 'SELECT, JOIN, and complex queries' },
+                    { title: 'Database Design', duration: '3 hours', description: 'ER diagrams and schema design' },
+                    { title: 'NoSQL Databases', duration: '3 hours', description: 'MongoDB, Redis, and document stores' },
+                    { title: 'Database Optimization', duration: '3 hours', description: 'Indexing and performance tuning' },
+                    { title: 'Database Project', duration: '4 hours', description: 'Design and implement a complete database' }
+                ]
+            },
+            {
+                id: 'machine-learning',
+                title: 'Machine Learning',
+                description: 'AI and ML algorithms with practical implementations.',
+                longDescription: 'Master machine learning algorithms and build intelligent applications.',
+                icon: 'fas fa-robot',
+                category: 'ai-ml',
+                difficulty: 'Advanced',
+                duration: '12 weeks',
+                modules: [
+                    { title: 'ML Fundamentals', duration: '4 hours', description: 'Introduction to machine learning concepts' },
+                    { title: 'Supervised Learning', duration: '5 hours', description: 'Classification and regression algorithms' },
+                    { title: 'Unsupervised Learning', duration: '4 hours', description: 'Clustering and dimensionality reduction' },
+                    { title: 'Neural Networks', duration: '5 hours', description: 'Deep learning fundamentals' },
+                    { title: 'Deep Learning', duration: '5 hours', description: 'CNNs, RNNs, and advanced architectures' },
+                    { title: 'ML Project', duration: '7 hours', description: 'Build and deploy a machine learning model' }
+                ]
+            },
+            {
+                id: 'artificial-intelligence',
+                title: 'Artificial Intelligence',
+                description: 'Comprehensive AI concepts and modern applications.',
+                longDescription: 'Explore AI fundamentals, search algorithms, and intelligent system design.',
+                icon: 'fas fa-brain',
+                category: 'ai-ml',
+                difficulty: 'Advanced',
+                duration: '14 weeks',
+                modules: [
+                    { title: 'AI Introduction', duration: '3 hours', description: 'History and foundations of AI' },
+                    { title: 'Search Algorithms', duration: '4 hours', description: 'Uninformed and informed search strategies' },
+                    { title: 'Knowledge Representation', duration: '4 hours', description: 'Logic and knowledge-based systems' },
+                    { title: 'Expert Systems', duration: '3 hours', description: 'Rule-based AI systems' },
+                    { title: 'Natural Language Processing', duration: '5 hours', description: 'Text processing and language models' },
+                    { title: 'AI Application', duration: '6 hours', description: 'Build an intelligent application' }
+                ]
+            },
+            {
+                id: 'cloud-computing',
+                title: 'Cloud Computing',
+                description: 'AWS, Azure, and cloud architecture fundamentals.',
+                longDescription: 'Master cloud platforms and learn to build scalable cloud applications.',
+                icon: 'fas fa-cloud',
+                category: 'programming',
+                difficulty: 'Intermediate',
+                duration: '10 weeks',
+                modules: [
+                    { title: 'Cloud Fundamentals', duration: '3 hours', description: 'Cloud concepts and service models' },
+                    { title: 'AWS Services', duration: '5 hours', description: 'EC2, S3, Lambda, and core AWS services' },
+                    { title: 'Azure Platform', duration: '4 hours', description: 'Microsoft Azure services and tools' },
+                    { title: 'Cloud Architecture', duration: '4 hours', description: 'Designing scalable cloud solutions' },
+                    { title: 'DevOps & CI/CD', duration: '4 hours', description: 'Continuous integration and deployment' },
+                    { title: 'Cloud Project', duration: '5 hours', description: 'Deploy a full-stack cloud application' }
+                ]
+            },
+            {
+                id: 'cybersecurity',
+                title: 'Cybersecurity',
+                description: 'Network security, ethical hacking, and security protocols.',
+                longDescription: 'Learn to protect systems and networks from cyber threats and attacks.',
+                icon: 'fas fa-shield-alt',
+                category: 'programming',
+                difficulty: 'Advanced',
+                duration: '12 weeks',
+                modules: [
+                    { title: 'Security Fundamentals', duration: '3 hours', description: 'CIA triad and security principles' },
+                    { title: 'Network Security', duration: '4 hours', description: 'Firewalls, VPNs, and network protection' },
+                    { title: 'Ethical Hacking', duration: '5 hours', description: 'Penetration testing and vulnerability assessment' },
+                    { title: 'Cryptography', duration: '4 hours', description: 'Encryption algorithms and key management' },
+                    { title: 'Security Protocols', duration: '3 hours', description: 'SSL/TLS, IPSec, and secure communications' },
+                    { title: 'Security Assessment', duration: '5 hours', description: 'Conduct a comprehensive security audit' }
+                ]
+            },
+            {
+                id: 'electronics-basics',
+                title: 'Electrical & Electronics Basics',
+                description: 'Fundamental concepts of electrical and electronic circuits.',
+                longDescription: 'Master the fundamentals of electrical engineering and electronic circuit design.',
+                icon: 'fas fa-bolt',
+                category: 'engineering',
+                difficulty: 'Beginner',
+                duration: '8 weeks',
+                modules: [
+                    { title: 'Circuit Analysis', duration: '4 hours', description: 'Ohms law, KVL, KCL, and basic circuits' },
+                    { title: 'Electronic Components', duration: '3 hours', description: 'Resistors, capacitors, inductors, and diodes' },
+                    { title: 'AC/DC Circuits', duration: '4 hours', description: 'Alternating and direct current analysis' },
+                    { title: 'Semiconductor Devices', duration: '4 hours', description: 'Diodes, transistors, and their applications' },
+                    { title: 'Amplifiers & Filters', duration: '3 hours', description: 'Signal processing circuits' },
+                    { title: 'Circuit Design', duration: '4 hours', description: 'Design and simulate electronic circuits' }
+                ]
+            },
+            {
+                id: 'digital-electronics',
+                title: 'Digital Electronics',
+                description: 'Logic gates, digital circuits, and microprocessor systems.',
+                longDescription: 'Learn digital logic design and microprocessor-based system development.',
+                icon: 'fas fa-microchip',
+                category: 'engineering',
+                difficulty: 'Intermediate',
+                duration: '10 weeks',
+                modules: [
+                    { title: 'Number Systems', duration: '2 hours', description: 'Binary, octal, hexadecimal conversions' },
+                    { title: 'Logic Gates', duration: '3 hours', description: 'Boolean algebra and gate operations' },
+                    { title: 'Combinational Circuits', duration: '4 hours', description: 'Encoders, decoders, multiplexers' },
+                    { title: 'Sequential Circuits', duration: '4 hours', description: 'Flip-flops, counters, and registers' },
+                    { title: 'Microprocessors', duration: '5 hours', description: '8085/8086 architecture and programming' },
+                    { title: 'Digital System Design', duration: '4 hours', description: 'Design a complete digital system' }
+                ]
+            },
+            {
+                id: 'power-systems',
+                title: 'Power Systems',
+                description: 'Electrical power generation, transmission, and distribution.',
+                longDescription: 'Understand power system analysis, protection, and renewable energy integration.',
+                icon: 'fas fa-plug',
+                category: 'engineering',
+                difficulty: 'Advanced',
+                duration: '12 weeks',
+                modules: [
+                    { title: 'Power Generation', duration: '4 hours', description: 'Thermal, hydro, and nuclear power plants' },
+                    { title: 'Transmission Systems', duration: '4 hours', description: 'High voltage transmission and HVDC' },
+                    { title: 'Distribution Networks', duration: '3 hours', description: 'Low voltage distribution systems' },
+                    { title: 'Power Electronics', duration: '4 hours', description: 'Converters, inverters, and motor drives' },
+                    { title: 'Renewable Energy', duration: '4 hours', description: 'Solar, wind, and grid integration' },
+                    { title: 'Power System Analysis', duration: '5 hours', description: 'Load flow and stability analysis' }
+                ]
+            },
+            {
+                id: 'robotics',
+                title: 'Robotics and Automation',
+                description: 'Robotic systems, automation, and control engineering.',
+                longDescription: 'Build and program robots while learning automation and control principles.',
+                icon: 'fas fa-robot',
+                category: 'engineering',
+                difficulty: 'Advanced',
+                duration: '14 weeks',
+                modules: [
+                    { title: 'Robotics Fundamentals', duration: '3 hours', description: 'Robot kinematics and dynamics' },
+                    { title: 'Sensors & Actuators', duration: '4 hours', description: 'Robot sensing and actuation systems' },
+                    { title: 'Control Systems', duration: '4 hours', description: 'PID control and feedback systems' },
+                    { title: 'Robot Programming', duration: '5 hours', description: 'ROS and robot software development' },
+                    { title: 'Industrial Automation', duration: '4 hours', description: 'PLCs and automated manufacturing' },
+                    { title: 'Robotics Project', duration: '6 hours', description: 'Build and program a complete robot' }
+                ]
+            }
+        ];
+
+        // Initialize the application
+        function init() {
+            loadUserData();
+            renderCourses();
+            init3DTutor();
+            updateTheme();
+            showTutorMessage("Hi! I'm your AI tutor. Ready to learn?", 3000);
+        }
+
+        // 3D Tutor Setup with enhanced animations
+        function init3DTutor() {
+            const container = document.getElementById('tutor-3d');
+            if (!container) return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            renderer.setClearColor(0x000000, 0);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // Enhanced lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(2, 4, 2);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            scene.add(directionalLight);
+
+            const pointLight = new THREE.PointLight(0x4f46e5, 0.5, 10);
+            pointLight.position.set(-2, 2, 2);
+            scene.add(pointLight);
+
+            // Create enhanced 3D character
+            const bodyGeometry = new THREE.CapsuleGeometry(0.6, 1.8, 4, 8);
+            const bodyMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0x4f46e5,
+                shininess: 30,
+                specular: 0x111111
+            });
+            const tutor = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            tutor.castShadow = true;
+            tutor.receiveShadow = true;
+            
+            // Enhanced face
+            const faceGeometry = new THREE.SphereGeometry(0.35, 16, 16);
+            const faceMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0xffdbac,
+                shininess: 20
+            });
+            const face = new THREE.Mesh(faceGeometry, faceMaterial);
+            face.position.y = 1.4;
+            face.castShadow = true;
+            tutor.add(face);
+
+            // Enhanced eyes with animation
+            const eyeGeometry = new THREE.SphereGeometry(0.06, 8, 8);
+            const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+            
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-0.12, 0.1, 0.28);
+            face.add(leftEye);
+            
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(0.12, 0.1, 0.28);
+            face.add(rightEye);
+
+            // Add smile
+            const smileGeometry = new THREE.TorusGeometry(0.1, 0.02, 8, 16, Math.PI);
+            const smileMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+            const smile = new THREE.Mesh(smileGeometry, smileMaterial);
+            smile.position.set(0, -0.05, 0.28);
+            smile.rotation.z = Math.PI;
+            face.add(smile);
+
+            // Add arms
+            const armGeometry = new THREE.CapsuleGeometry(0.15, 0.8, 4, 8);
+            const armMaterial = new THREE.MeshPhongMaterial({ color: 0x4f46e5 });
+            
+            const leftArm = new THREE.Mesh(armGeometry, armMaterial);
+            leftArm.position.set(-0.8, 0.5, 0);
+            leftArm.rotation.z = 0.3;
+            leftArm.castShadow = true;
+            tutor.add(leftArm);
+            
+            const rightArm = new THREE.Mesh(armGeometry, armMaterial);
+            rightArm.position.set(0.8, 0.5, 0);
+            rightArm.rotation.z = -0.3;
+            rightArm.castShadow = true;
+            tutor.add(rightArm);
+
+            // Add ground plane for shadows
+            const groundGeometry = new THREE.PlaneGeometry(10, 10);
+            const groundMaterial = new THREE.MeshLambertMaterial({ 
+                color: 0xffffff, 
+                transparent: true, 
+                opacity: 0.1 
+            });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -1.5;
+            ground.receiveShadow = true;
+            scene.add(ground);
+
+            scene.add(tutor);
+            camera.position.set(0, 0.5, 4);
+
+            tutorScene = { scene, camera, renderer, tutor, face, leftArm, rightArm, leftEye, rightEye };
+
+            // Enhanced animation loop
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.016;
+                
+                // Breathing animation
+                const breathScale = 1 + Math.sin(time * 2) * 0.02;
+                tutor.scale.y = breathScale;
+                
+                // Gentle swaying
+                tutor.rotation.y = Math.sin(time * 0.5) * 0.1;
+                tutor.position.x = Math.sin(time * 0.3) * 0.05;
+                
+                // Head movement
+                face.rotation.x = Math.sin(time * 0.8) * 0.05;
+                face.rotation.y = Math.sin(time * 0.6) * 0.08;
+                
+                // Arm movements
+                leftArm.rotation.z = 0.3 + Math.sin(time * 0.7) * 0.2;
+                rightArm.rotation.z = -0.3 - Math.sin(time * 0.7 + 1) * 0.2;
+                
+                // Eye blinking
+                if (Math.sin(time * 3) > 0.98) {
+                    leftEye.scale.y = 0.1;
+                    rightEye.scale.y = 0.1;
+                } else {
+                    leftEye.scale.y = 1;
+                    rightEye.scale.y = 1;
+                }
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                if (container.offsetWidth > 0) {
+                    camera.aspect = container.offsetWidth / container.offsetHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(container.offsetWidth, container.offsetHeight);
+                }
+            });
+        }
+
+        // Enhanced tutor interactions
+        function showTutorMessage(message, duration = 3000) {
+            const speechBubble = document.getElementById('tutor-speech');
+            const textElement = document.getElementById('tutor-text');
+            
+            textElement.textContent = message;
+            speechBubble.classList.add('show');
+            
+            // Enhanced tutor animation when speaking
+            if (tutorScene) {
+                const { face, leftArm, rightArm } = tutorScene;
+                
+                // Excited gestures
+                const originalLeftZ = leftArm.rotation.z;
+                const originalRightZ = rightArm.rotation.z;
+                
+                leftArm.rotation.z = originalLeftZ + 0.5;
+                rightArm.rotation.z = originalRightZ - 0.5;
+                
+                setTimeout(() => {
+                    leftArm.rotation.z = originalLeftZ;
+                    rightArm.rotation.z = originalRightZ;
+                }, 1000);
+            }
+            
+            setTimeout(() => {
+                speechBubble.classList.remove('show');
+            }, duration);
+        }
+
+        // Page navigation
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageName + '-page').classList.remove('hidden');
+            
+            // Update navigation active state
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-indigo-600');
+                link.classList.add('text-gray-900');
+            });
+            
+            if (pageName === 'dashboard') {
+                renderDashboard();
+                if (isVoiceEnabled) {
+                    speak("Welcome to your dashboard! Here you can track your progress and continue learning.");
+                }
+                showTutorMessage("Check out your learning progress!", 2000);
+            } else if (pageName === 'courses') {
+                if (isVoiceEnabled) {
+                    speak("Explore our comprehensive course catalog. Choose from programming, AI, and engineering courses.");
+                }
+                showTutorMessage("Discover amazing courses to boost your skills!", 2000);
+            } else if (pageName === 'home') {
+                if (isVoiceEnabled) {
+                    speak("Welcome to EduVerse AI! Your journey to mastering technology starts here.");
+                }
+                showTutorMessage("Ready to start your learning adventure?", 2000);
+            }
+        }
+
+        // Course filtering
+        function filterCourses(category) {
+            currentFilter = category;
+            
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-indigo-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            
+            event.target.classList.add('active', 'bg-indigo-600', 'text-white');
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            
+            renderCourses();
+        }
+
+        // Enhanced course rendering
+        function renderCourses() {
+            const grid = document.getElementById('courses-grid');
+            const filteredCourses = currentFilter === 'all' ? courses : courses.filter(course => course.category === currentFilter);
+            
+            grid.innerHTML = filteredCourses.map(course => {
+                const isEnrolled = enrolledCourses.find(c => c.courseId === course.id);
+                const enrolledClass = isEnrolled ? 'border-2 border-green-500' : '';
+                
+                return `
+                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover theme-transition ${enrolledClass}">
+                        ${isEnrolled ? '<div class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">Enrolled</div>' : ''}
+                        <div class="text-indigo-600 text-3xl mb-4">
+                            <i class="${course.icon}"></i>
+                        </div>
+                        <div class="mb-2">
+                            <span class="inline-block bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-semibold mr-2">${course.difficulty}</span>
+                            <span class="inline-block bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs font-semibold">${course.duration}</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-gray-800">${course.title}</h3>
+                        <p class="text-gray-600 mb-4 text-sm leading-relaxed">${course.description}</p>
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">${course.modules.length} modules</div>
+                            <div class="text-xs text-gray-400">${course.modules.reduce((total, module) => total + parseInt(module.duration), 0)} hours total</div>
+                        </div>
+                        <div class="space-y-2">
+                            <button onclick="showCourseDetail('${course.id}')" class="w-full bg-gray-100 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">Learn More</button>
+                            <button onclick="enrollCourse('${course.id}')" class="w-full ${isEnrolled ? 'bg-green-600 hover:bg-green-700' : 'bg-indigo-600 hover:bg-indigo-700'} text-white py-2 px-4 rounded-lg transition-colors text-sm font-medium">
+                                ${isEnrolled ? 'Continue Learning' : 'Enroll Now'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Enhanced course detail modal
+        function showCourseDetail(courseId) {
+            const course = courses.find(c => c.id === courseId);
+            if (!course) return;
+
+            const isEnrolled = enrolledCourses.find(c => c.courseId === courseId);
+            const totalHours = course.modules.reduce((total, module) => total + parseInt(module.duration), 0);
+
+            document.getElementById('modal-title').textContent = course.title;
+            document.getElementById('modal-content').innerHTML = `
+                <div class="mb-6">
+                    <div class="flex items-center mb-4">
+                        <div class="text-indigo-600 text-4xl mr-4">
+                            <i class="${course.icon}"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-semibold">${course.difficulty}</span>
+                                <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-semibold">${course.duration}</span>
+                                <span class="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm font-semibold">${totalHours} hours</span>
+                            </div>
+                            ${isEnrolled ? '<span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm font-semibold">✓ Enrolled</span>' : ''}
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-lg mb-6 leading-relaxed">${course.longDescription}</p>
+                    
+                    <h4 class="text-xl font-semibold mb-4 text-gray-800">Course Modules:</h4>
+                    <div class="grid gap-3 mb-6">
+                        ${course.modules.map((module, index) => `
+                            <div class="flex items-start p-4 bg-gray-50 rounded-lg theme-transition hover:bg-gray-100">
+                                <div class="bg-indigo-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-semibold mr-4 mt-1 flex-shrink-0">
+                                    ${index + 1}
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <h5 class="font-semibold text-gray-800">${module.title}</h5>
+                                        <span class="text-sm text-indigo-600 font-medium">${module.duration}</span>
+                                    </div>
+                                    <p class="text-gray-600 text-sm">${module.description}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg mb-6">
+                        <h5 class="font-semibold text-gray-800 mb-2">What you'll learn:</h5>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• Comprehensive understanding of ${course.title.toLowerCase()}</li>
+                            <li>• Hands-on projects and real-world applications</li>
+                            <li>• Industry best practices and modern techniques</li>
+                            <li>• Certificate of completion</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button onclick="enrollCourse('${course.id}'); closeModal();" class="bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition-colors flex-1 font-semibold">
+                            ${isEnrolled ? 'Continue Learning' : 'Enroll Now'}
+                        </button>
+                        <button onclick="closeModal()" class="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('course-modal').classList.remove('hidden');
+            
+            if (isVoiceEnabled) {
+                speak(`Here's detailed information about ${course.title}. This ${course.difficulty.toLowerCase()} level course takes ${course.duration} to complete.`);
+            }
+        }
+
+        // Enhanced enrollment system
+        function enrollCourse(courseId) {
+            if (!currentUser) {
+                showLogin();
+                showNotification('Please login to enroll in courses', 'error');
+                return;
+            }
+
+            const existingEnrollment = enrolledCourses.find(c => c.courseId === courseId);
+            if (existingEnrollment) {
+                showPage('dashboard');
+                showNotification('Redirecting to your dashboard to continue learning!');
+                return;
+            }
+
+            const course = courses.find(c => c.id === courseId);
+            const newEnrollment = {
+                courseId: courseId,
+                title: course.title,
+                progress: 0,
+                completedModules: [],
+                enrolledDate: new Date().toISOString(),
+                lastAccessed: new Date().toISOString()
+            };
+            
+            enrolledCourses.push(newEnrollment);
+            saveUserData();
+            renderCourses();
+            
+            showNotification(`Successfully enrolled in ${course.title}!`);
+            showTutorMessage(`Great choice! ${course.title} will boost your skills significantly.`, 3000);
+            
+            if (isVoiceEnabled) {
+                speak(`Congratulations! You're now enrolled in ${course.title}. Let's start your learning journey!`);
+            }
+        }
+
+        // Enhanced dashboard with statistics
+        function renderDashboard() {
+            const container = document.getElementById('enrolled-courses');
+            const statsContainer = document.getElementById('dashboard-stats');
+            
+            if (!currentUser) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-user-lock text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">Please Login</h3>
+                        <p class="text-gray-500 mb-4">You need to login to view your dashboard</p>
+                        <button onclick="showLogin()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">Login</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Calculate statistics
+            const totalCourses = enrolledCourses.length;
+            const completedCourses = enrolledCourses.filter(c => c.progress === 100).length;
+            const totalModules = enrolledCourses.reduce((total, course) => {
+                const courseData = courses.find(c => c.id === course.courseId);
+                return total + (courseData ? courseData.modules.length : 0);
+            }, 0);
+            const completedModules = enrolledCourses.reduce((total, course) => total + course.completedModules.length, 0);
+            const averageProgress = totalCourses > 0 ? Math.round(enrolledCourses.reduce((total, course) => total + course.progress, 0) / totalCourses) : 0;
+
+            // Render statistics
+            statsContainer.innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-lg theme-transition">
+                    <div class="flex items-center">
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-book text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-2xl font-bold text-gray-800">${totalCourses}</div>
+                            <div class="text-gray-600">Enrolled Courses</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg theme-transition">
+                    <div class="flex items-center">
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-2xl font-bold text-gray-800">${completedCourses}</div>
+                            <div class="text-gray-600">Completed</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg theme-transition">
+                    <div class="flex items-center">
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <i class="fas fa-tasks text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-2xl font-bold text-gray-800">${completedModules}/${totalModules}</div>
+                            <div class="text-gray-600">Modules Done</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg theme-transition">
+                    <div class="flex items-center">
+                        <div class="bg-orange-100 p-3 rounded-full">
+                            <i class="fas fa-chart-line text-orange-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-2xl font-bold text-gray-800">${averageProgress}%</div>
+                            <div class="text-gray-600">Avg Progress</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (enrolledCourses.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-graduation-cap text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">No Courses Yet</h3>
+                        <p class="text-gray-500 mb-4">Start your learning journey by enrolling in a course</p>
+                        <button onclick="showPage('courses')" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">Browse Courses</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = enrolledCourses.map(enrolled => {
+                const course = courses.find(c => c.id === enrolled.courseId);
+                const nextModuleIndex = enrolled.completedModules.length;
+                const nextModule = course.modules[nextModuleIndex];
+                
+                return `
+                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover theme-transition">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="text-indigo-600 text-3xl">
+                                <i class="${course.icon}"></i>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm text-gray-500">Progress</div>
+                                <div class="text-lg font-bold text-indigo-600">${enrolled.progress}%</div>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-gray-800">${enrolled.title}</h3>
+                        <div class="mb-4">
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="bg-indigo-600 h-3 rounded-full progress-bar transition-all duration-500" style="width: ${enrolled.progress}%"></div>
+                            </div>
+                            <div class="flex justify-between text-sm text-gray-600 mt-1">
+                                <span>${enrolled.completedModules.length}/${course.modules.length} modules</span>
+                                <span>${enrolled.progress === 100 ? 'Completed!' : 'In Progress'}</span>
+                            </div>
+                        </div>
+                        
+                        ${nextModule ? `
+                            <div class="bg-blue-50 p-3 rounded-lg mb-4">
+                                <div class="text-sm font-semibold text-blue-800 mb-1">Next Module:</div>
+                                <div class="text-sm text-blue-700">${nextModule.title}</div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="space-y-2 mb-4 max-h-40 overflow-y-auto">
+                            ${course.modules.map((module, index) => {
+                                const isCompleted = enrolled.completedModules.includes(index);
+                                const isNext = index === nextModuleIndex && !isCompleted;
+                                const isLocked = index > nextModuleIndex;
+                                
+                                return `
+                                    <div class="module-item flex items-center justify-between p-2 rounded ${isCompleted ? 'completed bg-green-50' : isNext ? 'bg-blue-50' : isLocked ? 'locked' : 'bg-gray-50'} theme-transition">
+                                        <div class="flex items-center flex-1">
+                                            <div class="w-6 h-6 rounded-full flex items-center justify-center mr-3 ${isCompleted ? 'bg-green-500 text-white' : isNext ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-600'}">
+                                                ${isCompleted ? '<i class="fas fa-check text-xs"></i>' : isLocked ? '<i class="fas fa-lock text-xs"></i>' : index + 1}
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="text-sm font-medium text-gray-800">${module.title}</div>
+                                                <div class="text-xs text-gray-500">${module.duration}</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center">
+                                            ${isCompleted ? 
+                                                '<span class="text-green-600 text-xs font-semibold">Completed</span>' : 
+                                                isNext ? 
+                                                    `<button onclick="completeModule('${enrolled.courseId}', ${index})" class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors">Start</button>` :
+                                                    isLocked ?
+                                                        '<span class="text-gray-400 text-xs">Locked</span>' :
+                                                        `<button onclick="completeModule('${enrolled.courseId}', ${index})" class="bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-700 transition-colors">Start</button>`
+                                            }
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        <button onclick="continueCourse('${enrolled.courseId}')" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                            ${enrolled.progress === 100 ? 'Review Course' : 'Continue Learning'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            // Show achievements if any courses completed
+            if (completedCourses > 0) {
+                document.getElementById('achievements-section').classList.remove('hidden');
+                renderAchievements();
+            }
+        }
+
+        // Achievement system
+        function renderAchievements() {
+            const container = document.getElementById('achievements');
+            const achievements = [];
+            
+            const completedCourses = enrolledCourses.filter(c => c.progress === 100).length;
+            const totalModules = enrolledCourses.reduce((total, course) => total + course.completedModules.length, 0);
+            
+            if (completedCourses >= 1) achievements.push({ icon: 'fas fa-trophy', text: 'First Course Complete', color: 'bg-yellow-100 text-yellow-800' });
+            if (completedCourses >= 3) achievements.push({ icon: 'fas fa-medal', text: 'Course Master', color: 'bg-purple-100 text-purple-800' });
+            if (totalModules >= 10) achievements.push({ icon: 'fas fa-star', text: 'Module Expert', color: 'bg-blue-100 text-blue-800' });
+            if (enrolledCourses.length >= 5) achievements.push({ icon: 'fas fa-graduation-cap', text: 'Learning Enthusiast', color: 'bg-green-100 text-green-800' });
+            
+            container.innerHTML = achievements.map(achievement => `
+                <span class="achievement-badge ${achievement.color}">
+                    <i class="${achievement.icon} mr-1"></i>
+                    ${achievement.text}
+                </span>
+            `).join('');
+        }
+
+        // Course content data
+        const courseContent = {
+            'html-css': {
+                0: {
+                    title: 'Introduction to HTML',
+                    content: `
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Welcome to HTML Fundamentals!</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed">HTML (HyperText Markup Language) is the standard markup language for creating web pages.</p>
+                        
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">What You'll Learn:</h4>
+                        <ul class="list-disc list-inside space-y-2 text-gray-600 mb-6">
+                            <li>HTML document structure</li>
+                            <li>Basic HTML tags and elements</li>
+                            <li>Creating your first web page</li>
+                            <li>Understanding semantic HTML</li>
+                        </ul>
+                        
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">HTML Document Structure:</h4>
+                        <div class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
+                            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;My First Web Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Hello World!&lt;/h1&gt;
+    &lt;p&gt;This is my first paragraph.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                        </div>
+                        
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Key Concepts:</h4>
+                        <div class="space-y-3 mb-6">
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                                <strong class="text-blue-800">Elements:</strong> <span class="text-blue-700">Building blocks of HTML (e.g., &lt;h1&gt;, &lt;p&gt;, &lt;div&gt;)</span>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                                <strong class="text-green-800">Tags:</strong> <span class="text-green-700">Keywords surrounded by angle brackets (&lt; &gt;)</span>
+                            </div>
+                            <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400">
+                                <strong class="text-yellow-800">Attributes:</strong> <span class="text-yellow-700">Additional information about elements (e.g., class, id)</span>
+                            </div>
+                        </div>
+                        
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Practice Exercise:</h4>
+                        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                            <p class="text-indigo-800">Create a simple HTML page with a heading, paragraph, and list of your hobbies.</p>
+                        </div>
+                    `,
+                    quiz: [
+                        {
+                            question: "What does HTML stand for?",
+                            options: ["HyperText Markup Language", "High Tech Modern Language", "Home Tool Markup Language", "Hyperlink and Text Markup Language"],
+                            correct: 0
+                        },
+                        {
+                            question: "Which tag is used for the largest heading?",
+                            options: ["&lt;h6&gt;", "&lt;h1&gt;", "&lt;header&gt;", "&lt;heading&gt;"],
+                            correct: 1
+                        }
+                    ]
+                },
+                1: {
+                    title: 'HTML Elements & Structure',
+                    content: `
+                        <h3>HTML Elements and Document Structure</h3>
+                        <p>Learn about semantic HTML elements and how to structure web pages properly.</p>
+                        
+                        <h4>Semantic HTML Elements:</h4>
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <strong>&lt;header&gt;</strong><br>
+                                Contains introductory content
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <strong>&lt;nav&gt;</strong><br>
+                                Navigation links
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <strong>&lt;main&gt;</strong><br>
+                                Main content area
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <strong>&lt;section&gt;</strong><br>
+                                Thematic grouping of content
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <strong>&lt;article&gt;</strong><br>
+                                Independent, self-contained content
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <strong>&lt;footer&gt;</strong><br>
+                                Footer information
+                            </div>
+                        </div>
+                        
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Example Structure:</h4>
+                        <div class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
+                            <pre><code>&lt;header&gt;
+    &lt;h1&gt;Website Title&lt;/h1&gt;
+    &lt;nav&gt;
+        &lt;ul&gt;
+            &lt;li&gt;&lt;a href="#home"&gt;Home&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#about"&gt;About&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/nav&gt;
+&lt;/header&gt;
+
+&lt;main&gt;
+    &lt;section&gt;
+        &lt;h2&gt;Welcome Section&lt;/h2&gt;
+        &lt;p&gt;Content goes here...&lt;/p&gt;
+    &lt;/section&gt;
+&lt;/main&gt;
+
+&lt;footer&gt;
+    &lt;p&gt;&copy; 2025 My Website&lt;/p&gt;
+&lt;/footer&gt;</code></pre>
+                        </div>
+                    `,
+                    quiz: [
+                        {
+                            question: "Which element represents the main content of a document?",
+                            options: ["&lt;main&gt;", "&lt;content&gt;", "&lt;body&gt;", "&lt;primary&gt;"],
+                            correct: 0
+                        }
+                    ]
+                }
+            },
+            'javascript': {
+                0: {
+                    title: 'JavaScript Basics',
+                    content: `
+                        <h3>JavaScript Fundamentals</h3>
+                        <p>JavaScript is a programming language that enables interactive web pages and dynamic content.</p>
+                        
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Variables and Data Types:</h4>
+                        <div class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
+                            <pre><code>// Variables
+let name = "John";
+const age = 25;
+var city = "New York";
+
+// Data Types
+let number = 42;           // Number
+let text = "Hello";        // String
+let isActive = true;       // Boolean
+let items = [1, 2, 3];     // Array
+let person = {             // Object
+    name: "Alice",
+    age: 30
+};</code></pre>
+                        </div>
+                        
+                        <h4>Basic Operations:</h4>
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <strong>Arithmetic:</strong> +, -, *, /, %
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg mb-4">
+                            <strong>Comparison:</strong> ==, ===, !=, !==, &lt;, &gt;
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg mb-4">
+                            <strong>Logical:</strong> &&, ||, !
+                        </div>
+                        
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Functions:</h4>
+                        <div class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
+                            <pre><code>// Function Declaration
+function greet(name) {
+    return "Hello, " + name + "!";
+}
+
+// Arrow Function
+const add = (a, b) => a + b;
+
+// Function Call
+console.log(greet("World"));
+console.log(add(5, 3));</code></pre>
+                        </div>
+                        
+                        <h4>Practice Exercise:</h4>
+                        <p>Create a function that calculates the area of a rectangle given width and height.</p>
+                    `,
+                    quiz: [
+                        {
+                            question: "Which keyword is used to declare a constant in JavaScript?",
+                            options: ["var", "let", "const", "final"],
+                            correct: 2
+                        },
+                        {
+                            question: "What does '===' check in JavaScript?",
+                            options: ["Value only", "Type only", "Both value and type", "Neither value nor type"],
+                            correct: 2
+                        }
+                    ]
+                }
+            },
+            'python': {
+                0: {
+                    title: 'Introduction to Python',
+                    content: `
+                        <h3>Welcome to Python Programming!</h3>
+                        <p>Python is a high-level, interpreted programming language known for its simplicity and readability.</p>
+                        
+                        <h4>Why Python?</h4>
+                        <ul>
+                            <li>Easy to learn and read</li>
+                            <li>Versatile - web development, data science, AI, automation</li>
+                            <li>Large community and extensive libraries</li>
+                            <li>Cross-platform compatibility</li>
+                        </ul>
+                        
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Your First Python Program:</h4>
+                        <div class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
+                            <pre><code># This is a comment
+print("Hello, World!")
+
+# Variables
+name = "Alice"
+age = 25
+height = 5.6
+
+print(f"My name is {name}, I'm {age} years old")
+
+# Basic input
+user_name = input("What's your name? ")
+print(f"Nice to meet you, {user_name}!")</code></pre>
+                        </div>
+                        
+                        <h4>Python Syntax Rules:</h4>
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <strong>Indentation:</strong> Python uses indentation to define code blocks
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg mb-4">
+                            <strong>Case Sensitive:</strong> 'Name' and 'name' are different variables
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg mb-4">
+                            <strong>Comments:</strong> Use # for single-line comments
+                        </div>
+                        
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Basic Data Types:</h4>
+                        <div class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
+                            <pre><code># Numbers
+integer_num = 42
+float_num = 3.14
+
+# Strings
+text = "Hello Python"
+multiline = """This is a
+multiline string"""
+
+# Boolean
+is_python_fun = True
+is_difficult = False
+
+# Check type
+print(type(integer_num))  # &lt;class 'int'&gt;</code></pre>
+                        </div>
+                        
+                        <h4>Practice Exercise:</h4>
+                        <p>Write a Python program that asks for your name and age, then calculates and displays what year you were born.</p>
+                    `,
+                    quiz: [
+                        {
+                            question: "What is used to define code blocks in Python?",
+                            options: ["Curly braces {}", "Parentheses ()", "Indentation", "Semicolons ;"],
+                            correct: 2
+                        },
+                        {
+                            question: "Which function is used to display output in Python?",
+                            options: ["echo()", "print()", "display()", "output()"],
+                            correct: 1
+                        }
+                    ]
+                }
+            }
+        };
+
+        // Enhanced module completion with content display
+        function completeModule(courseId, moduleIndex) {
+            const enrolled = enrolledCourses.find(c => c.courseId === courseId);
+            const course = courses.find(c => c.id === courseId);
+            if (!enrolled || !course) return;
+
+            // Check if module is accessible (sequential unlock)
+            if (moduleIndex > enrolled.completedModules.length) {
+                showNotification('Complete previous modules first!', 'error');
+                return;
+            }
+
+            // Show module content
+            showModuleContent(courseId, moduleIndex);
+        }
+
+        // New function to display module content
+        function showModuleContent(courseId, moduleIndex) {
+            const course = courses.find(c => c.id === courseId);
+            const module = course.modules[moduleIndex];
+            const content = courseContent[courseId] && courseContent[courseId][moduleIndex];
+            
+            if (!content) {
+                // Fallback content for modules without specific content
+                content = {
+                    title: module.title,
+                    content: `
+                        <h3>${module.title}</h3>
+                        <p>${module.description}</p>
+                        <div class="bg-blue-50 p-6 rounded-lg text-center">
+                            <i class="fas fa-book-open text-4xl text-blue-600 mb-4"></i>
+                            <h4 class="text-lg font-semibold mb-2">Course Content Coming Soon!</h4>
+                            <p class="text-gray-600 mb-4">This module is being prepared with comprehensive content, examples, and exercises.</p>
+                            <p class="text-sm text-gray-500">Duration: ${module.duration}</p>
+                        </div>
+                        <div class="mt-6 p-4 bg-green-50 rounded-lg">
+                            <h5 class="font-semibold text-green-800 mb-2">Learning Objectives:</h5>
+                            <p class="text-green-700">${module.description}</p>
+                        </div>
+                    `,
+                    quiz: []
+                };
+            }
+
+            document.getElementById('modal-title').innerHTML = `
+                <div class="flex items-center">
+                    <i class="${course.icon} text-indigo-600 mr-3"></i>
+                    ${content.title}
+                </div>
+            `;
+            
+            document.getElementById('modal-content').innerHTML = `
+                <div class="module-content">
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-semibold mr-3">
+                                    Module ${moduleIndex + 1} of ${course.modules.length}
+                                </span>
+                                <span class="text-gray-500 text-sm">${module.duration}</span>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                ${course.title}
+                            </div>
+                        </div>
+                        
+                        <div class="prose max-w-none mb-6">
+                            <div class="space-y-4">
+                                ${content.content}
+                            </div>
+                        </div>
+                        
+                        ${content.quiz && content.quiz.length > 0 ? `
+                            <div class="mt-8 p-6 bg-gray-50 rounded-lg">
+                                <h4 class="text-lg font-semibold mb-4 flex items-center">
+                                    <i class="fas fa-question-circle text-indigo-600 mr-2"></i>
+                                    Quick Quiz
+                                </h4>
+                                <div id="quiz-container">
+                                    ${content.quiz.map((q, qIndex) => `
+                                        <div class="mb-6 quiz-question" data-question="${qIndex}">
+                                            <p class="font-medium mb-3">${qIndex + 1}. ${q.question}</p>
+                                            <div class="space-y-2">
+                                                ${q.options.map((option, oIndex) => `
+                                                    <label class="flex items-center p-3 bg-white rounded-lg border hover:bg-gray-50 cursor-pointer transition-colors">
+                                                        <input type="radio" name="q${qIndex}" value="${oIndex}" class="mr-3">
+                                                        <span>${option}</span>
+                                                    </label>
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                    <button onclick="checkQuiz('${courseId}', ${moduleIndex})" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                                        Check Answers
+                                    </button>
+                                    <div id="quiz-results" class="mt-4 hidden"></div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="mt-8 flex justify-between items-center">
+                            <button onclick="closeModal()" class="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                Close
+                            </button>
+                            <button onclick="markModuleComplete('${courseId}', ${moduleIndex})" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center">
+                                <i class="fas fa-check mr-2"></i>
+                                Mark as Complete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('course-modal').classList.remove('hidden');
+            
+            if (isVoiceEnabled) {
+                speak(`Starting ${content.title}. This module covers ${module.description.toLowerCase()}`);
+            }
+            showTutorMessage(`Great choice! Let's dive into ${content.title}`, 2000);
+        }
+
+        // Quiz checking function
+        function checkQuiz(courseId, moduleIndex) {
+            const content = courseContent[courseId] && courseContent[courseId][moduleIndex];
+            if (!content || !content.quiz) return;
+            
+            let score = 0;
+            let results = [];
+            
+            content.quiz.forEach((question, qIndex) => {
+                const selectedAnswer = document.querySelector(`input[name="q${qIndex}"]:checked`);
+                const isCorrect = selectedAnswer && parseInt(selectedAnswer.value) === question.correct;
+                
+                if (isCorrect) score++;
+                
+                results.push({
+                    question: qIndex,
+                    correct: isCorrect,
+                    selectedAnswer: selectedAnswer ? parseInt(selectedAnswer.value) : -1,
+                    correctAnswer: question.correct
+                });
+            });
+            
+            const percentage = Math.round((score / content.quiz.length) * 100);
+            const resultsContainer = document.getElementById('quiz-results');
+            
+            resultsContainer.innerHTML = `
+                <div class="p-4 rounded-lg ${percentage >= 70 ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}">
+                    <div class="flex items-center mb-3">
+                        <i class="fas ${percentage >= 70 ? 'fa-check-circle text-green-600' : 'fa-times-circle text-red-600'} text-xl mr-2"></i>
+                        <span class="font-semibold ${percentage >= 70 ? 'text-green-800' : 'text-red-800'}">
+                            Score: ${score}/${content.quiz.length} (${percentage}%)
+                        </span>
+                    </div>
+                    <p class="text-sm ${percentage >= 70 ? 'text-green-700' : 'text-red-700'}">
+                        ${percentage >= 70 ? 'Great job! You can proceed to mark this module as complete.' : 'Review the content and try again. You need 70% to pass.'}
+                    </p>
+                </div>
+            `;
+            
+            resultsContainer.classList.remove('hidden');
+            
+            // Highlight correct/incorrect answers
+            results.forEach((result, qIndex) => {
+                const questionDiv = document.querySelector(`[data-question="${qIndex}"]`);
+                const labels = questionDiv.querySelectorAll('label');
+                
+                labels.forEach((label, oIndex) => {
+                    if (oIndex === result.correctAnswer) {
+                        label.classList.add('bg-green-100', 'border-green-300');
+                    } else if (oIndex === result.selectedAnswer && !result.correct) {
+                        label.classList.add('bg-red-100', 'border-red-300');
+                    }
+                });
+            });
+            
+            if (percentage >= 70) {
+                showTutorMessage("Excellent work on the quiz! You're ready to complete this module.", 3000);
+                if (isVoiceEnabled) {
+                    speak(`Excellent! You scored ${percentage} percent on the quiz. You're ready to complete this module.`);
+                }
+            } else {
+                showTutorMessage("Review the content and try the quiz again. You've got this!", 3000);
+                if (isVoiceEnabled) {
+                    speak(`You scored ${percentage} percent. Review the content and try again - you need 70% to pass.`);
+                }
+            }
+        }
+
+        // Mark module as complete
+        function markModuleComplete(courseId, moduleIndex) {
+            const enrolled = enrolledCourses.find(c => c.courseId === courseId);
+            const course = courses.find(c => c.id === courseId);
+            if (!enrolled || !course) return;
+
+            if (!enrolled.completedModules.includes(moduleIndex)) {
+                enrolled.completedModules.push(moduleIndex);
+                enrolled.progress = Math.round((enrolled.completedModules.length / course.modules.length) * 100);
+                enrolled.lastAccessed = new Date().toISOString();
+                
+                saveUserData();
+                closeModal();
+                renderDashboard();
+                
+                const moduleName = course.modules[moduleIndex].title;
+                showNotification(`Module "${moduleName}" completed! 🎉`);
+                showTutorMessage(`Excellent work! You completed "${moduleName}". Keep it up!`, 3000);
+                
+                if (enrolled.progress === 100) {
+                    showNotification(`🎊 Congratulations! You completed ${course.title}!`);
+                    showTutorMessage(`Amazing! You've mastered ${course.title}! Ready for the next challenge?`, 4000);
+                    
+                    if (isVoiceEnabled) {
+                        speak(`Congratulations! You have successfully completed ${course.title}. This is a major achievement!`);
+                    }
+                } else if (isVoiceEnabled) {
+                    speak(`Great job completing ${moduleName}. You're making excellent progress!`);
+                }
+            } else {
+                closeModal();
+                showNotification('Module already completed!');
+            }
+        }
+
+        // Continue course
+        function continueCourse(courseId) {
+            const course = courses.find(c => c.id === courseId);
+            const enrolled = enrolledCourses.find(c => c.courseId === courseId);
+            
+            enrolled.lastAccessed = new Date().toISOString();
+            saveUserData();
+            
+            if (enrolled.progress === 100) {
+                showTutorMessage(`Great choice reviewing ${course.title}! Reinforcement is key to mastery.`, 3000);
+                if (isVoiceEnabled) {
+                    speak(`Reviewing ${course.title} is a smart move. Let's reinforce your knowledge!`);
+                }
+            } else {
+                const nextModule = course.modules[enrolled.completedModules.length];
+                showTutorMessage(`Ready to tackle "${nextModule.title}"? You've got this!`, 3000);
+                if (isVoiceEnabled) {
+                    speak(`Let's continue with ${course.title}. Your next module is ${nextModule.title}.`);
+                }
+            }
+            
+            showNotification(`Continuing with ${course.title}...`);
+        }
+
+        // Enhanced authentication
+        function showLogin() {
+            document.getElementById('login-modal').classList.remove('hidden');
+            showTutorMessage("Login to track your progress and unlock personalized features!", 2000);
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Show loading state
+            const loginBtn = document.getElementById('login-btn-text');
+            const spinner = document.getElementById('login-spinner');
+            loginBtn.textContent = 'Logging in...';
+            spinner.classList.remove('hidden');
+            
+            // Simulate API call
+            setTimeout(() => {
+                if (email && password) {
+                    currentUser = { 
+                        email: email, 
+                        name: email.split('@')[0],
+                        joinDate: new Date().toISOString()
+                    };
+                    updateAuthUI();
+                    closeLoginModal();
+                    loadUserData();
+                    
+                    showNotification(`Welcome back, ${currentUser.name}! 🎉`);
+                    showTutorMessage(`Great to see you again, ${currentUser.name}! Ready to continue learning?`, 3000);
+                    
+                    if (isVoiceEnabled) {
+                        speak(`Welcome back, ${currentUser.name}! I'm excited to continue your learning journey with you.`);
+                    }
+                } else {
+                    showNotification('Please enter valid credentials', 'error');
+                }
+                
+                // Reset button state
+                loginBtn.textContent = 'Login';
+                spinner.classList.add('hidden');
+            }, 1500);
+        }
+
+        function showSignup() {
+            showNotification('Signup feature coming soon! For demo, use any email/password to login.');
+        }
+
+        function logout() {
+            currentUser = null;
+            enrolledCourses = [];
+            updateAuthUI();
+            showPage('home');
+            localStorage.removeItem('eduverse_user');
+            localStorage.removeItem('eduverse_courses');
+            showNotification('Logged out successfully');
+            showTutorMessage("Thanks for learning with us! Come back anytime!", 2000);
+        }
+
+        function updateAuthUI() {
+            const authButtons = document.getElementById('auth-buttons');
+            const userMenu = document.getElementById('user-menu');
+            
+            if (currentUser) {
+                authButtons.classList.add('hidden');
+                userMenu.classList.remove('hidden');
+                document.getElementById('username').textContent = currentUser.name;
+            } else {
+                authButtons.classList.remove('hidden');
+                userMenu.classList.add('hidden');
+            }
+        }
+
+        // Enhanced theme system
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            updateTheme();
+            localStorage.setItem('eduverse_theme', isDarkMode ? 'dark' : 'light');
+            
+            showNotification(`Switched to ${isDarkMode ? 'dark' : 'light'} theme`);
+            showTutorMessage(`${isDarkMode ? 'Dark' : 'Light'} theme activated! Easy on the eyes for better learning.`, 2000);
+        }
+
+        function updateTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            
+            if (isDarkMode) {
+                body.classList.add('dark');
+                icon.className = 'fas fa-sun text-yellow-400';
+            } else {
+                body.classList.remove('dark');
+                icon.className = 'fas fa-moon text-gray-600';
+            }
+        }
+
+        // Enhanced voice system
+        function toggleVoice() {
+            isVoiceEnabled = !isVoiceEnabled;
+            const icon = document.getElementById('voice-icon');
+            
+            if (isVoiceEnabled) {
+                icon.className = 'fas fa-volume-up text-indigo-600';
+                speak('Voice narration enabled! I can now guide you through your learning journey with audio feedback.');
+                showTutorMessage("Voice mode ON! I'll speak to guide you through your learning!", 3000);
+            } else {
+                icon.className = 'fas fa-volume-mute text-gray-600';
+                showTutorMessage("Voice mode OFF. I'll still be here to help visually!", 2000);
+            }
+            
+            localStorage.setItem('eduverse_voice', isVoiceEnabled);
+        }
+
+        function speak(text) {
+            if (!isVoiceEnabled || !('speechSynthesis' in window)) return;
+            
+            // Cancel any ongoing speech
+            speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1.1;
+            utterance.volume = 0.8;
+            
+            // Try to use a more natural voice
+            const voices = speechSynthesis.getVoices();
+            const preferredVoice = voices.find(voice => 
+                voice.name.includes('Google') || 
+                voice.name.includes('Microsoft') ||
+                voice.lang.startsWith('en')
+            );
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+            }
+            
+            speechSynthesis.speak(utterance);
+        }
+
+        // Demo functionality
+        function startDemo() {
+            showTutorMessage("Let me show you around EduVerse AI!", 2000);
+            
+            if (isVoiceEnabled) {
+                speak("Welcome to the EduVerse AI demo! Let me show you our amazing features.");
+            }
+            
+            setTimeout(() => {
+                showPage('courses');
+                showTutorMessage("Here are all our courses! Try filtering by category.", 3000);
+            }, 2000);
+            
+            setTimeout(() => {
+                if (isVoiceEnabled) {
+                    speak("Here you can see all our comprehensive courses. Try clicking on different categories to filter them.");
+                }
+            }, 2500);
+        }
+
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const text = document.getElementById('notification-text');
+            
+            text.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Modal functions
+        function closeModal() {
+            document.getElementById('course-modal').classList.add('hidden');
+        }
+
+        // Data persistence
+        function saveUserData() {
+            if (currentUser) {
+                localStorage.setItem('eduverse_user', JSON.stringify(currentUser));
+                localStorage.setItem('eduverse_courses', JSON.stringify(enrolledCourses));
+            }
+        }
+
+        function loadUserData() {
+            const savedUser = localStorage.getItem('eduverse_user');
+            const savedCourses = localStorage.getItem('eduverse_courses');
+            const savedTheme = localStorage.getItem('eduverse_theme');
+            const savedVoice = localStorage.getItem('eduverse_voice');
+            
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateAuthUI();
+            }
+            
+            if (savedCourses) {
+                enrolledCourses = JSON.parse(savedCourses);
+            }
+            
+            if (savedTheme) {
+                isDarkMode = savedTheme === 'dark';
+            }
+            
+            if (savedVoice) {
+                isVoiceEnabled = savedVoice === 'true';
+                const icon = document.getElementById('voice-icon');
+                if (icon) {
+                    icon.className = isVoiceEnabled ? 'fas fa-volume-up text-indigo-600' : 'fas fa-volume-mute text-gray-600';
+                }
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Handle clicks outside modals
+        document.addEventListener('click', function(event) {
+            const courseModal = document.getElementById('course-modal');
+            const loginModal = document.getElementById('login-modal');
+            
+            if (event.target === courseModal) {
+                closeModal();
+            }
+            
+            if (event.target === loginModal) {
+                closeLoginModal();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+                closeLoginModal();
+            }
+        });
+
+        // Enhanced mobile responsiveness
+        window.addEventListener('resize', function() {
+            if (tutorScene && tutorScene.camera && tutorScene.renderer) {
+                const container = document.getElementById('tutor-3d');
+                if (container && container.offsetWidth > 0) {
+                    tutorScene.camera.aspect = container.offsetWidth / container.offsetHeight;
+                    tutorScene.camera.updateProjectionMatrix();
+                    tutorScene.renderer.setSize(container.offsetWidth, container.offsetHeight);
+                }
+            }
+        });
+
+        // Smooth scrolling for better UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'980ab47e630b8513',t:'MTc1ODEzNDE0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
