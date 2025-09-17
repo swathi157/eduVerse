@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduVerse AI - Learn with AI-Powered Education</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        
+        .tutor-container {
+            width: 300px;
+            height: 400px;
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .theme-transition {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .dark {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .dark .bg-white {
+            background-color: #2d2d2d !important;
+        }
+        
+        .dark .bg-gray-50 {
+            background-color: #1f1f1f !important;
+        }
+        
+        .dark .bg-gray-100 {
+            background-color: #3d3d3d !important;
+        }
+        
+        .dark .bg-gray-800 {
+            background-color: #0f0f0f !important;
+        }
+        
+        .dark .text-gray-800 {
+            color: #ffffff !important;
+        }
+        
+        .dark .text-gray-700 {
+            color: #e5e5e5 !important;
+        }
+        
+        .dark .text-gray-600 {
+            color: #cccccc !important;
+        }
+        
+        .dark .text-gray-500 {
+            color: #a0a0a0 !important;
+        }
+        
+        .dark .text-gray-400 {
+            color: #888888 !important;
+        }
+        
+        .dark .text-gray-300 {
+            color: #d0d0d0 !important;
+        }
+        
+        .dark .text-gray-900 {
+            color: #ffffff !important;
+        }
+        
+        .dark .border-gray-200 {
+            border-color: #404040 !important;
+        }
+        
+        .dark .border-gray-300 {
+            border-color: #505050 !important;
+        }
+        
+        .dark .border-gray-700 {
+            border-color: #606060 !important;
+        }
+        
+        .dark .hover\:bg-gray-50:hover {
+            background-color: #3d3d3d !important;
+        }
+        
+        .dark .hover\:bg-gray-100:hover {
+            background-color: #4d4d4d !important;
+        }
+        
+        .dark .hover\:bg-gray-200:hover {
+            background-color: #5d5d5d !important;
+        }
+        
+        .dark .hover\:text-gray-700:hover {
+            color: #ffffff !important;
+        }
+        
+        .dark .hover\:text-gray-800:hover {
+            color: #ffffff !important;
+        }
+        
+        .dark .hover\:text-white:hover {
+            color: #ffffff !important;
+        }
+        
+        .dark input {
+            background-color: #3d3d3d !important;
+            border-color: #505050 !important;
+            color: #ffffff !important;
+        }
+        
+        .dark input:focus {
+            border-color: #667eea !important;
+        }
+        
+        .dark label {
+            color: #e5e5e5 !important;
+        }
+        
+        .tour-highlight {
+            position: relative;
+            z-index: 60 !important;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.6), 0 0 25px rgba(99, 102, 241, 0.4) !important;
+            border-radius: 8px !important;
+            animation: pulse-highlight 2s infinite;
+            transition: all 0.3s ease !important;
+        }
+        
+        @keyframes pulse-highlight {
+            0%, 100% { 
+                box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.6), 0 0 25px rgba(99, 102, 241, 0.4);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 0 8px rgba(99, 102, 241, 0.4), 0 0 35px rgba(99, 102, 241, 0.6);
+                transform: scale(1.02);
+            }
+        }
+        
+        .tour-popup-enter {
+            animation: popupEnter 0.3s ease-out;
+        }
+        
+        @keyframes popupEnter {
+            0% {
+                opacity: 0;
+                transform: scale(0.9) translate(-50%, -50%);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translate(-50%, -50%);
+            }
+        }
+    </style>
+</head>
+<body class="theme-transition">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50 theme-transition">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-indigo-600">EduVerse AI</h1>
+                    </div>
+                    <div class="hidden md:ml-6 md:flex md:space-x-8">
+                        <a href="#" onclick="showPage('home')" class="nav-link text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Home</a>
+                        <a href="#" onclick="showPage('courses')" class="nav-link text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Courses</a>
+                        <a href="#" onclick="showPage('dashboard')" class="nav-link text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Dashboard</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100 theme-transition">
+                        <i class="fas fa-moon text-gray-600" id="theme-icon"></i>
+                    </button>
+                    <button onclick="toggleVoice()" class="p-2 rounded-lg hover:bg-gray-100 theme-transition">
+                        <i class="fas fa-volume-up text-gray-600" id="voice-icon"></i>
+                    </button>
+                    <div id="auth-buttons">
+                        <button onclick="showLogin()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">Login</button>
+                    </div>
+                    <div id="user-menu" class="hidden">
+                        <span class="text-gray-700" id="username"></span>
+                        <button onclick="logout()" class="ml-2 text-red-600 hover:text-red-800">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- Home Page -->
+        <div id="home-page" class="page">
+            <!-- Hero Section -->
+            <section class="gradient-bg text-white py-20">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col lg:flex-row items-center">
+                        <div class="lg:w-1/2 mb-10 lg:mb-0">
+                            <h1 class="text-5xl font-bold mb-6 animate-float">Welcome to EduVerse AI</h1>
+                            <p class="text-xl mb-8 opacity-90">Experience the future of learning with our AI-powered educational platform. Master programming, engineering, and cutting-edge technologies with personalized guidance.</p>
+                            <div class="space-x-4">
+                                <button onclick="showPage('courses')" class="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">Explore Courses</button>
+                                <button onclick="startTour()" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition-colors">Take a Tour</button>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2 flex justify-center">
+                            <div class="tutor-container">
+                                <div id="tutor-3d" class="w-full h-full rounded-lg bg-white bg-opacity-10 backdrop-blur-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="py-20 bg-gray-50 theme-transition">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-gray-800 mb-4">Why Choose EduVerse AI?</h2>
+                        <p class="text-xl text-gray-600">Advanced learning features powered by artificial intelligence</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="bg-white p-8 rounded-xl shadow-lg card-hover theme-transition">
+                            <div class="text-indigo-600 text-4xl mb-4">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-4 text-gray-800">AI-Powered Tutor</h3>
+                            <p class="text-gray-600">Interactive 3D tutor with voice narration and personalized guidance</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-xl shadow-lg card-hover theme-transition">
+                            <div class="text-indigo-600 text-4xl mb-4">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-4 text-gray-800">Progress Tracking</h3>
+                            <p class="text-gray-600">Monitor your learning journey with detailed analytics and achievements</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-xl shadow-lg card-hover theme-transition">
+                            <div class="text-indigo-600 text-4xl mb-4">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-4 text-gray-800">Responsive Learning</h3>
+                            <p class="text-gray-600">Learn anywhere, anytime with our mobile-optimized platform</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Courses Page -->
+        <div id="courses-page" class="page hidden">
+            <section class="py-20 bg-gray-50 theme-transition">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-gray-800 mb-4">Our Courses</h2>
+                        <p class="text-xl text-gray-600">Master the skills that matter in today's tech world</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="courses-grid">
+                        <!-- Courses will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page hidden">
+            <section class="py-20 bg-gray-50 theme-transition">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="mb-8">
+                        <h2 class="text-4xl font-bold text-gray-800 mb-4">My Dashboard</h2>
+                        <p class="text-xl text-gray-600">Track your learning progress and continue your courses</p>
+                    </div>
+                    <div id="enrolled-courses" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Enrolled courses will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Course Detail Modal -->
+        <div id="course-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl max-w-4xl w-full max-h-90vh overflow-y-auto theme-transition">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-gray-800" id="modal-title"></h3>
+                        <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                    <div id="modal-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Modal -->
+        <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl max-w-md w-full theme-transition">
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Login to EduVerse AI</h3>
+                    <form onsubmit="handleLogin(event)">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                            <input type="email" id="login-email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500" required>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                            <input type="password" id="login-password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500" required>
+                        </div>
+                        <div class="flex justify-between">
+                            <button type="button" onclick="closeLoginModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors">Login</button>
+                        </div>
+                    </form>
+                    <div class="mt-4 text-center">
+                        <p class="text-gray-600">Don't have an account? <button onclick="showSignup()" class="text-indigo-600 hover:text-indigo-800">Sign up</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">EduVerse AI</h3>
+                    <p class="text-gray-300">Empowering learners worldwide with AI-driven education and cutting-edge technology courses.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" onclick="showPage('home')" class="text-gray-300 hover:text-white">Home</a></li>
+                        <li><a href="#" onclick="showPage('courses')" class="text-gray-300 hover:text-white">Courses</a></li>
+                        <li><a href="#" onclick="showPage('dashboard')" class="text-gray-300 hover:text-white">Dashboard</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">About Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white text-xl"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white text-xl"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white text-xl"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white text-xl"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p class="text-gray-300">&copy; 2025 EduVerse AI. All rights reserved. Built with ❤️ for learners worldwide.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global state
+        let currentUser = null;
+        let enrolledCourses = [];
+        let isDarkMode = false;
+        let isVoiceEnabled = false;
+        let tutorScene = null;
+
+        // Course data
+        const courses = [
+            {
+                id: 'html-css',
+                title: 'HTML & CSS',
+                description: 'Master the fundamentals of web development with HTML and CSS.',
+                icon: 'fab fa-html5',
+                modules: [
+                    'Introduction to HTML',
+                    'HTML Elements & Structure',
+                    'CSS Fundamentals',
+                    'Responsive Design',
+                    'CSS Grid & Flexbox',
+                    'Web Project'
+                ]
+            },
+            {
+                id: 'javascript',
+                title: 'JavaScript',
+                description: 'Learn modern JavaScript programming from basics to advanced concepts.',
+                icon: 'fab fa-js-square',
+                modules: [
+                    'JavaScript Basics',
+                    'DOM Manipulation',
+                    'Functions & Scope',
+                    'Async Programming',
+                    'ES6+ Features',
+                    'JavaScript Project'
+                ]
+            },
+            {
+                id: 'python',
+                title: 'Python Programming',
+                description: 'Comprehensive Python course covering syntax, libraries, and applications.',
+                icon: 'fab fa-python',
+                modules: [
+                    'Introduction to Python',
+                    'Data Types & Variables',
+                    'Control Structures',
+                    'Functions & Modules',
+                    'Object-Oriented Programming',
+                    'Mini Project'
+                ]
+            },
+            {
+                id: 'java',
+                title: 'Java',
+                description: 'Object-oriented programming with Java for enterprise applications.',
+                icon: 'fab fa-java',
+                modules: [
+                    'Java Fundamentals',
+                    'OOP Concepts',
+                    'Collections Framework',
+                    'Exception Handling',
+                    'Multithreading',
+                    'Java Application'
+                ]
+            },
+            {
+                id: 'cpp',
+                title: 'C & C++',
+                description: 'System programming and competitive coding with C and C++.',
+                icon: 'fas fa-code',
+                modules: [
+                    'C Programming Basics',
+                    'Pointers & Memory',
+                    'C++ Introduction',
+                    'Classes & Objects',
+                    'STL & Templates',
+                    'System Project'
+                ]
+            },
+            {
+                id: 'data-structures',
+                title: 'Data Structures',
+                description: 'Essential data structures for efficient algorithm implementation.',
+                icon: 'fas fa-project-diagram',
+                modules: [
+                    'Arrays & Strings',
+                    'Linked Lists',
+                    'Stacks & Queues',
+                    'Trees & Graphs',
+                    'Hash Tables',
+                    'Advanced Structures'
+                ]
+            },
+            {
+                id: 'algorithms',
+                title: 'Algorithms',
+                description: 'Problem-solving techniques and algorithmic thinking.',
+                icon: 'fas fa-brain',
+                modules: [
+                    'Algorithm Analysis',
+                    'Sorting & Searching',
+                    'Recursion & DP',
+                    'Graph Algorithms',
+                    'Greedy Algorithms',
+                    'Competitive Programming'
+                ]
+            },
+            {
+                id: 'database',
+                title: 'Database Management',
+                description: 'SQL, NoSQL databases and database design principles.',
+                icon: 'fas fa-database',
+                modules: [
+                    'Database Fundamentals',
+                    'SQL Queries',
+                    'Database Design',
+                    'NoSQL Databases',
+                    'Database Optimization',
+                    'Database Project'
+                ]
+            },
+            {
+                id: 'machine-learning',
+                title: 'Machine Learning',
+                description: 'AI and ML algorithms with practical implementations.',
+                icon: 'fas fa-robot',
+                modules: [
+                    'ML Fundamentals',
+                    'Supervised Learning',
+                    'Unsupervised Learning',
+                    'Neural Networks',
+                    'Deep Learning',
+                    'ML Project'
+                ]
+            },
+            {
+                id: 'artificial-intelligence',
+                title: 'Artificial Intelligence',
+                description: 'Comprehensive AI concepts and modern applications.',
+                icon: 'fas fa-brain',
+                modules: [
+                    'AI Introduction',
+                    'Search Algorithms',
+                    'Knowledge Representation',
+                    'Expert Systems',
+                    'Natural Language Processing',
+                    'AI Application'
+                ]
+            },
+            {
+                id: 'cloud-computing',
+                title: 'Cloud Computing',
+                description: 'AWS, Azure, and cloud architecture fundamentals.',
+                icon: 'fas fa-cloud',
+                modules: [
+                    'Cloud Fundamentals',
+                    'AWS Services',
+                    'Azure Platform',
+                    'Cloud Architecture',
+                    'DevOps & CI/CD',
+                    'Cloud Project'
+                ]
+            },
+            {
+                id: 'cybersecurity',
+                title: 'Cybersecurity',
+                description: 'Network security, ethical hacking, and security protocols.',
+                icon: 'fas fa-shield-alt',
+                modules: [
+                    'Security Fundamentals',
+                    'Network Security',
+                    'Ethical Hacking',
+                    'Cryptography',
+                    'Security Protocols',
+                    'Security Assessment'
+                ]
+            },
+            {
+                id: 'electronics-basics',
+                title: 'Electrical & Electronics Basics',
+                description: 'Fundamental concepts of electrical and electronic circuits.',
+                icon: 'fas fa-bolt',
+                modules: [
+                    'Circuit Analysis',
+                    'Electronic Components',
+                    'AC/DC Circuits',
+                    'Semiconductor Devices',
+                    'Amplifiers & Filters',
+                    'Circuit Design'
+                ]
+            },
+            {
+                id: 'digital-electronics',
+                title: 'Digital Electronics',
+                description: 'Logic gates, digital circuits, and microprocessor systems.',
+                icon: 'fas fa-microchip',
+                modules: [
+                    'Number Systems',
+                    'Logic Gates',
+                    'Combinational Circuits',
+                    'Sequential Circuits',
+                    'Microprocessors',
+                    'Digital System Design'
+                ]
+            },
+            {
+                id: 'power-systems',
+                title: 'Power Systems',
+                description: 'Electrical power generation, transmission, and distribution.',
+                icon: 'fas fa-plug',
+                modules: [
+                    'Power Generation',
+                    'Transmission Systems',
+                    'Distribution Networks',
+                    'Power Electronics',
+                    'Renewable Energy',
+                    'Power System Analysis'
+                ]
+            },
+            {
+                id: 'robotics',
+                title: 'Robotics and Automation',
+                description: 'Robotic systems, automation, and control engineering.',
+                icon: 'fas fa-robot',
+                modules: [
+                    'Robotics Fundamentals',
+                    'Sensors & Actuators',
+                    'Control Systems',
+                    'Robot Programming',
+                    'Industrial Automation',
+                    'Robotics Project'
+                ]
+            }
+        ];
+
+        // Initialize the application
+        function init() {
+            loadUserData();
+            renderCourses();
+            init3DTutor();
+            updateTheme();
+        }
+
+        // 3D Tutor Setup
+        function init3DTutor() {
+            const container = document.getElementById('tutor-3d');
+            if (!container) return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            renderer.setClearColor(0x000000, 0);
+            container.appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+
+            // Create a simple 3D character (placeholder)
+            const geometry = new THREE.CapsuleGeometry(0.5, 1.5, 4, 8);
+            const material = new THREE.MeshPhongMaterial({ color: 0x4f46e5 });
+            const tutor = new THREE.Mesh(geometry, material);
+            
+            // Add simple face
+            const faceGeometry = new THREE.SphereGeometry(0.3, 8, 8);
+            const faceMaterial = new THREE.MeshPhongMaterial({ color: 0xffdbac });
+            const face = new THREE.Mesh(faceGeometry, faceMaterial);
+            face.position.y = 1.2;
+            tutor.add(face);
+
+            // Add eyes
+            const eyeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+            const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+            
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-0.1, 0.1, 0.25);
+            face.add(leftEye);
+            
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(0.1, 0.1, 0.25);
+            face.add(rightEye);
+
+            scene.add(tutor);
+            camera.position.z = 3;
+
+            tutorScene = { scene, camera, renderer, tutor, face };
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Idle animation
+                tutor.rotation.y += 0.005;
+                face.rotation.x = Math.sin(Date.now() * 0.001) * 0.1;
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                if (container.offsetWidth > 0) {
+                    camera.aspect = container.offsetWidth / container.offsetHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(container.offsetWidth, container.offsetHeight);
+                }
+            });
+        }
+
+        // Page navigation
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageName + '-page').classList.remove('hidden');
+            
+            if (pageName === 'dashboard') {
+                renderDashboard();
+            }
+        }
+
+        // Render courses
+        function renderCourses() {
+            const grid = document.getElementById('courses-grid');
+            grid.innerHTML = courses.map(course => `
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover theme-transition">
+                    <div class="text-indigo-600 text-3xl mb-4">
+                        <i class="${course.icon}"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">${course.title}</h3>
+                    <p class="text-gray-600 mb-6">${course.description}</p>
+                    <div class="space-y-2">
+                        <button onclick="showCourseDetail('${course.id}')" class="w-full bg-gray-100 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Learn More</button>
+                        <button onclick="enrollCourse('${course.id}')" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Enroll</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show course detail
+        function showCourseDetail(courseId) {
+            const course = courses.find(c => c.id === courseId);
+            if (!course) return;
+
+            document.getElementById('modal-title').textContent = course.title;
+            document.getElementById('modal-content').innerHTML = `
+                <div class="mb-6">
+                    <div class="text-indigo-600 text-4xl mb-4">
+                        <i class="${course.icon}"></i>
+                    </div>
+                    <p class="text-gray-600 text-lg mb-6">${course.description}</p>
+                    
+                    <h4 class="text-xl font-semibold mb-4 text-gray-800">Course Modules:</h4>
+                    <div class="grid gap-3 mb-6">
+                        ${course.modules.map((module, index) => `
+                            <div class="flex items-center p-3 bg-gray-50 rounded-lg theme-transition">
+                                <div class="bg-indigo-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-semibold mr-3">
+                                    ${index + 1}
+                                </div>
+                                <span class="text-gray-800">${module}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button onclick="enrollCourse('${course.id}'); closeModal();" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors flex-1">
+                            Enroll Now
+                        </button>
+                        <button onclick="closeModal()" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('course-modal').classList.remove('hidden');
+        }
+
+        // Enroll in course
+        function enrollCourse(courseId) {
+            if (!currentUser) {
+                showLogin();
+                return;
+            }
+
+            if (!enrolledCourses.find(c => c.courseId === courseId)) {
+                const course = courses.find(c => c.id === courseId);
+                enrolledCourses.push({
+                    courseId: courseId,
+                    title: course.title,
+                    progress: 0,
+                    completedModules: []
+                });
+                saveUserData();
+                
+                // Show success message
+                alert(`Successfully enrolled in ${course.title}!`);
+                
+                if (isVoiceEnabled) {
+                    speak(`Welcome to ${course.title}! You're now enrolled and ready to start learning.`);
+                }
+            } else {
+                alert('You are already enrolled in this course!');
+            }
+        }
+
+        // Render dashboard
+        function renderDashboard() {
+            const container = document.getElementById('enrolled-courses');
+            
+            if (!currentUser) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-user-lock text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">Please Login</h3>
+                        <p class="text-gray-500 mb-4">You need to login to view your dashboard</p>
+                        <button onclick="showLogin()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">Login</button>
+                    </div>
+                `;
+                return;
+            }
+
+            if (enrolledCourses.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-graduation-cap text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">No Courses Yet</h3>
+                        <p class="text-gray-500 mb-4">Start your learning journey by enrolling in a course</p>
+                        <button onclick="showPage('courses')" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">Browse Courses</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = enrolledCourses.map(enrolled => {
+                const course = courses.find(c => c.id === enrolled.courseId);
+                return `
+                    <div class="bg-white rounded-xl shadow-lg p-6 card-hover theme-transition">
+                        <div class="text-indigo-600 text-3xl mb-4">
+                            <i class="${course.icon}"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-gray-800">${enrolled.title}</h3>
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Progress</span>
+                                <span>${enrolled.progress}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-indigo-600 h-2 rounded-full progress-bar" style="width: ${enrolled.progress}%"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2 mb-4">
+                            ${course.modules.map((module, index) => `
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded theme-transition">
+                                    <span class="text-sm text-gray-700">${module}</span>
+                                    <div class="flex items-center">
+                                        ${enrolled.completedModules.includes(index) ? 
+                                            '<i class="fas fa-check-circle text-green-500"></i>' : 
+                                            `<button onclick="completeModule('${enrolled.courseId}', ${index})" class="text-indigo-600 hover:text-indigo-800 text-sm">Start</button>`
+                                        }
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button onclick="continueCourse('${enrolled.courseId}')" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
+                            Continue Learning
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Complete module
+        function completeModule(courseId, moduleIndex) {
+            const enrolled = enrolledCourses.find(c => c.courseId === courseId);
+            if (!enrolled) return;
+
+            if (!enrolled.completedModules.includes(moduleIndex)) {
+                enrolled.completedModules.push(moduleIndex);
+                enrolled.progress = Math.round((enrolled.completedModules.length / courses.find(c => c.id === courseId).modules.length) * 100);
+                saveUserData();
+                renderDashboard();
+                
+                if (isVoiceEnabled) {
+                    speak(`Great job! Module completed. You're making excellent progress.`);
+                }
+            }
+        }
+
+        // Continue course
+        function continueCourse(courseId) {
+            const course = courses.find(c => c.id === courseId);
+            const enrolled = enrolledCourses.find(c => c.courseId === courseId);
+            
+            if (isVoiceEnabled) {
+                speak(`Let's continue with ${course.title}. You're doing great!`);
+            }
+            
+            alert(`Continuing with ${course.title}. Keep up the great work!`);
+        }
+
+        // Authentication
+        function showLogin() {
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Simple demo authentication
+            if (email && password) {
+                currentUser = { email: email, name: email.split('@')[0] };
+                updateAuthUI();
+                closeLoginModal();
+                loadUserData();
+                
+                if (isVoiceEnabled) {
+                    speak(`Welcome back, ${currentUser.name}! Ready to continue learning?`);
+                }
+            }
+        }
+
+        function showSignup() {
+            alert('Signup feature coming soon! For demo, use any email/password to login.');
+        }
+
+        function logout() {
+            currentUser = null;
+            enrolledCourses = [];
+            updateAuthUI();
+            showPage('home');
+            localStorage.removeItem('eduverse_user');
+            localStorage.removeItem('eduverse_courses');
+        }
+
+        function updateAuthUI() {
+            const authButtons = document.getElementById('auth-buttons');
+            const userMenu = document.getElementById('user-menu');
+            
+            if (currentUser) {
+                authButtons.classList.add('hidden');
+                userMenu.classList.remove('hidden');
+                document.getElementById('username').textContent = currentUser.name;
+            } else {
+                authButtons.classList.remove('hidden');
+                userMenu.classList.add('hidden');
+            }
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            updateTheme();
+            localStorage.setItem('eduverse_theme', isDarkMode ? 'dark' : 'light');
+        }
+
+        function updateTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            
+            if (isDarkMode) {
+                body.classList.add('dark');
+                icon.className = 'fas fa-sun text-yellow-400';
+            } else {
+                body.classList.remove('dark');
+                icon.className = 'fas fa-moon text-gray-600';
+            }
+        }
+
+        // Voice toggle
+        function toggleVoice() {
+            isVoiceEnabled = !isVoiceEnabled;
+            const icon = document.getElementById('voice-icon');
+            
+            if (isVoiceEnabled) {
+                icon.className = 'fas fa-volume-up text-indigo-600';
+                speak('Voice narration enabled! I can now guide you through your learning journey.');
+            } else {
+                icon.className = 'fas fa-volume-mute text-gray-600';
+            }
+            
+            localStorage.setItem('eduverse_voice', isVoiceEnabled);
+        }
+
+        function speak(text) {
+            if (!isVoiceEnabled || !('speechSynthesis' in window)) return;
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
+            speechSynthesis.speak(utterance);
+        }
+
+        // Tour functionality
+        let tourStep = 0;
+        let tourOverlay = null;
+        let tourActive = false;
+        
+        const tourSteps = [
+            {
+                target: 'nav',
+                title: 'Navigation Bar',
+                description: 'Use the navigation to switch between Home, Courses, and Dashboard. Toggle dark mode and voice narration here.',
+                position: 'bottom'
+            },
+            {
+                target: '.tutor-container',
+                title: 'AI Tutor',
+                description: 'Meet your 3D AI tutor! This interactive character will guide you through your learning journey.',
+                position: 'left'
+            },
+            {
+                target: '.gradient-bg .max-w-7xl',
+                title: 'Hero Section',
+                description: 'This is your starting point. From here you can explore courses or take this guided tour.',
+                position: 'center'
+            },
+            {
+                target: '#theme-icon',
+                title: 'Theme Toggle',
+                description: 'Click here to switch between light and dark themes for comfortable learning.',
+                position: 'bottom'
+            },
+            {
+                target: '#voice-icon',
+                title: 'Voice Narration',
+                description: 'Enable voice narration to have your AI tutor speak and guide you through the platform.',
+                position: 'bottom'
+            }
+        ];
+        
+        function startTour() {
+            tourStep = 0;
+            tourActive = true;
+            createTourOverlay();
+            showTourStep();
+            
+            if (isVoiceEnabled) {
+                speak('Welcome to EduVerse AI! Let me show you around our amazing learning platform.');
+            }
+        }
+        
+        function createTourOverlay() {
+            // Remove existing overlay if any
+            if (tourOverlay) {
+                document.body.removeChild(tourOverlay);
+            }
+            
+            tourOverlay = document.createElement('div');
+            tourOverlay.id = 'tour-overlay';
+            tourOverlay.className = 'fixed inset-0 bg-black bg-opacity-75 z-50';
+            tourOverlay.innerHTML = `
+                <div class="absolute bg-white rounded-xl max-w-md w-full mx-4 p-6 shadow-2xl theme-transition" id="tour-popup" style="min-width: 320px;">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-gray-800" id="tour-title"></h3>
+                        <button onclick="endTour()" class="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                    <p class="text-gray-600 mb-6 leading-relaxed" id="tour-description"></p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500 font-medium" id="tour-progress"></span>
+                        <div class="flex space-x-3">
+                            <button onclick="previousTourStep()" id="tour-prev" class="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="fas fa-chevron-left mr-1"></i>Previous
+                            </button>
+                            <button onclick="nextTourStep()" id="tour-next" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                                Next<i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(tourOverlay);
+        }
+        
+        function showTourStep() {
+            if (!tourActive || tourStep >= tourSteps.length) {
+                endTour();
+                return;
+            }
+            
+            const step = tourSteps[tourStep];
+            const target = document.querySelector(step.target);
+            
+            // Update tour popup content
+            document.getElementById('tour-title').textContent = step.title;
+            document.getElementById('tour-description').textContent = step.description;
+            document.getElementById('tour-progress').textContent = `Step ${tourStep + 1} of ${tourSteps.length}`;
+            
+            // Update button states
+            const prevBtn = document.getElementById('tour-prev');
+            const nextBtn = document.getElementById('tour-next');
+            
+            if (prevBtn && nextBtn) {
+                prevBtn.disabled = tourStep === 0;
+                prevBtn.style.opacity = tourStep === 0 ? '0.5' : '1';
+                prevBtn.style.cursor = tourStep === 0 ? 'not-allowed' : 'pointer';
+                
+                if (tourStep === tourSteps.length - 1) {
+                    nextBtn.innerHTML = 'Finish<i class="fas fa-check ml-1"></i>';
+                } else {
+                    nextBtn.innerHTML = 'Next<i class="fas fa-chevron-right ml-1"></i>';
+                }
+            }
+            
+            // Highlight target element
+            document.querySelectorAll('.tour-highlight').forEach(el => {
+                el.classList.remove('tour-highlight');
+            });
+            
+            if (target) {
+                target.classList.add('tour-highlight');
+                
+                // Smooth scroll to target with proper timing
+                setTimeout(() => {
+                    target.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center',
+                        inline: 'center'
+                    });
+                }, 100);
+            }
+            
+            // Position tour popup
+            setTimeout(() => {
+                positionTourPopup(step.position, target);
+            }, 200);
+            
+            // Voice narration
+            if (isVoiceEnabled) {
+                setTimeout(() => {
+                    speak(`${step.title}. ${step.description}`);
+                }, 300);
+            }
+        }
+        
+        function positionTourPopup(position, target) {
+            const popup = document.getElementById('tour-popup');
+            const overlay = document.getElementById('tour-overlay');
+            
+            if (!popup || !overlay) return;
+            
+            // Reset popup positioning
+            popup.style.position = 'absolute';
+            popup.style.top = '';
+            popup.style.left = '';
+            popup.style.right = '';
+            popup.style.bottom = '';
+            popup.style.transform = '';
+            
+            if (position === 'center' || !target) {
+                // Center the popup
+                popup.style.top = '50%';
+                popup.style.left = '50%';
+                popup.style.transform = 'translate(-50%, -50%)';
+            } else {
+                const rect = target.getBoundingClientRect();
+                const popupRect = popup.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                let top, left;
+                
+                switch (position) {
+                    case 'bottom':
+                        top = Math.min(rect.bottom + 20, viewportHeight - popupRect.height - 20);
+                        left = Math.max(20, Math.min(rect.left + (rect.width / 2) - (popupRect.width / 2), viewportWidth - popupRect.width - 20));
+                        break;
+                    case 'top':
+                        top = Math.max(20, rect.top - popupRect.height - 20);
+                        left = Math.max(20, Math.min(rect.left + (rect.width / 2) - (popupRect.width / 2), viewportWidth - popupRect.width - 20));
+                        break;
+                    case 'left':
+                        top = Math.max(20, Math.min(rect.top + (rect.height / 2) - (popupRect.height / 2), viewportHeight - popupRect.height - 20));
+                        left = Math.max(20, rect.left - popupRect.width - 20);
+                        if (left < 20) {
+                            // Fallback to right if not enough space on left
+                            left = Math.min(rect.right + 20, viewportWidth - popupRect.width - 20);
+                        }
+                        break;
+                    case 'right':
+                        top = Math.max(20, Math.min(rect.top + (rect.height / 2) - (popupRect.height / 2), viewportHeight - popupRect.height - 20));
+                        left = Math.min(rect.right + 20, viewportWidth - popupRect.width - 20);
+                        if (left + popupRect.width > viewportWidth - 20) {
+                            // Fallback to left if not enough space on right
+                            left = Math.max(20, rect.left - popupRect.width - 20);
+                        }
+                        break;
+                    default:
+                        // Center as fallback
+                        top = (viewportHeight - popupRect.height) / 2;
+                        left = (viewportWidth - popupRect.width) / 2;
+                }
+                
+                popup.style.top = Math.max(20, top) + 'px';
+                popup.style.left = Math.max(20, left) + 'px';
+            }
+        }
+        
+        function nextTourStep() {
+            if (!tourActive) return;
+            
+            if (tourStep >= tourSteps.length - 1) {
+                endTour();
+            } else {
+                tourStep++;
+                showTourStep();
+            }
+        }
+        
+        function previousTourStep() {
+            if (!tourActive || tourStep <= 0) return;
+            
+            tourStep--;
+            showTourStep();
+        }
+        
+        function endTour() {
+            tourActive = false;
+            
+            if (tourOverlay && document.body.contains(tourOverlay)) {
+                document.body.removeChild(tourOverlay);
+            }
+            tourOverlay = null;
+            
+            // Remove highlights
+            document.querySelectorAll('.tour-highlight').forEach(el => {
+                el.classList.remove('tour-highlight');
+            });
+            
+            // Reset tour state
+            tourStep = 0;
+            
+            if (isVoiceEnabled) {
+                speak('Tour completed! You can now explore EduVerse AI and start your learning journey. Feel free to browse our courses or check out your dashboard.');
+            }
+            
+            // Show completion message
+            setTimeout(() => {
+                if (!tourActive) { // Only show if tour wasn't restarted
+                    alert('🎉 Tour completed! You\'re now ready to explore EduVerse AI. Start by browsing our courses or logging in to track your progress.');
+                }
+            }, 500);
+        }
+
+        // Modal functions
+        function closeModal() {
+            document.getElementById('course-modal').classList.add('hidden');
+        }
+
+        // Data persistence
+        function saveUserData() {
+            if (currentUser) {
+                localStorage.setItem('eduverse_user', JSON.stringify(currentUser));
+                localStorage.setItem('eduverse_courses', JSON.stringify(enrolledCourses));
+            }
+        }
+
+        function loadUserData() {
+            const savedUser = localStorage.getItem('eduverse_user');
+            const savedCourses = localStorage.getItem('eduverse_courses');
+            const savedTheme = localStorage.getItem('eduverse_theme');
+            const savedVoice = localStorage.getItem('eduverse_voice');
+            
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateAuthUI();
+            }
+            
+            if (savedCourses) {
+                enrolledCourses = JSON.parse(savedCourses);
+            }
+            
+            if (savedTheme) {
+                isDarkMode = savedTheme === 'dark';
+            }
+            
+            if (savedVoice) {
+                isVoiceEnabled = savedVoice === 'true';
+                const icon = document.getElementById('voice-icon');
+                icon.className = isVoiceEnabled ? 'fas fa-volume-up text-indigo-600' : 'fas fa-volume-mute text-gray-600';
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Handle clicks outside modals and keyboard navigation
+        document.addEventListener('click', function(event) {
+            const courseModal = document.getElementById('course-modal');
+            const loginModal = document.getElementById('login-modal');
+            const tourOverlay = document.getElementById('tour-overlay');
+            
+            if (event.target === courseModal) {
+                closeModal();
+            }
+            
+            if (event.target === loginModal) {
+                closeLoginModal();
+            }
+            
+            // Don't close tour on overlay click - only on X button
+        });
+        
+        // Keyboard navigation for tour
+        document.addEventListener('keydown', function(event) {
+            if (!tourActive) return;
+            
+            switch(event.key) {
+                case 'ArrowRight':
+                case 'Enter':
+                case ' ':
+                    event.preventDefault();
+                    nextTourStep();
+                    break;
+                case 'ArrowLeft':
+                    event.preventDefault();
+                    previousTourStep();
+                    break;
+                case 'Escape':
+                    event.preventDefault();
+                    endTour();
+                    break;
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'980a8df957760ac9',t:'MTc1ODEzMjU2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
